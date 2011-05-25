@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator">
+<event id="0">
+<time set="true">
+<reference>2.0</reference>
+<upper>3.0</upper>
+<lower>1.0</lower>
+</time>
+<concentration set="true">
+<reference>300.0</reference>
+<lower>200.0</lower>
+</concentration>
+<derivative>
+<upper>0.0</upper>
+</derivative>
+</event>
+<event id="1">
+<time set="false">
+<reference>8.0</reference>
+</time>
+<concentration set="false">
+<reference>18.0</reference>
+</concentration>
+<derivative>
+<upper>-0.5</upper>
+</derivative>
+</event>
+<event id="2">
+<time set="false">
+<reference>19.0</reference>
+</time>
+<concentration set="false">
+<reference>18.0</reference>
+</concentration>
+<derivative>
+<upper>0.5</upper>
+</derivative>
+</event>
+<event id="3">
+<time set="false">
+<reference>24.0</reference>
+</time>
+<concentration set="true">
+<reference>65.0</reference>
+<lower>50.0</lower>
+</concentration>
+<derivative>
+<upper>0.0</upper>
+</derivative>
+</event>
+<event id="4">
+<time set="false">
+<reference>52.0</reference>
+</time>
+<concentration set="false">
+<reference>28.0</reference>
+</concentration>
+<derivative/>
+</event>
+<transition left="1" right="2">
+<concentration>
+<upper>20</upper>
+</concentration>
+<derivative>
+<upper>0.5</upper>
+<lower>-0.5</lower>
+</derivative>
+</transition>
+<transition left="3" right="4">
+<concentration>
+<upper>60</upper>
+</concentration>
+<derivative/>
+</transition>
+<transition left="4">
+<concentration>
+<upper>60</upper>
+</concentration>
+<derivative/>
+</transition>
+</formula>
