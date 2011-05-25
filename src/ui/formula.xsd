@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2011 Tomas Vejpustek -->
+<!-- Full copyright notice found in src/LICENSE. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator"
+xmlns="http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator"
+elementFormDefault="qualified">
+
+	<xs:complexType name="property">
+		<xs:all>
+			<xs:element name="reference" minOccurs="1" type="xs:double"/>
+			<xs:element name="lower" minOccurs="0" type="xs:double"/>
+			<xs:element name="upper" minOccurs="0" type="xs:double"/>
+		</xs:all>
+		<xs:attribute name="set" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="relative_property">
+		<xs:all>
+			<xs:element name="lower" minOccurs="0" type="xs:double"/>
+			<xs:element name="upper" minOccurs="0" type="xs:double"/>
+		</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="event">
+		<xs:all>
+			<xs:element name="time" minOccurs="1" type="property"/>
+			<xs:element name="concentration" minOccurs="1" type="property"/>
+			<xs:element name="derivative" minOccurs="1" type="relative_property"/>
+		</xs:all>
+		<xs:attribute name="id" type="xs:nonNegativeInteger" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="transition">
+		<xs:all>
+			<xs:element name="concentration" minOccurs="1" type="relative_property"/>
+			<xs:element name="derivative" minOccurs="1" type="relative_property"/>
+		</xs:all>
+		<xs:attribute name="left" type="xs:nonNegativeInteger"/>
+		<xs:attribute name="right" type="xs:nonNegativeInteger"/>
+	</xs:complexType>
+
+	<xs:element name="formula">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="event" minOccurs="0" maxOccurs="unbounded" type="event"/>
+				<xs:element name="transition" minOccurs="0" maxOccurs="unbounded" type="transition"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
