@@ -27,9 +27,6 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 	 */
 	public AbstractLineTSLoader(BufferedReader input) throws TSLoaderException{
 		this.input = input;
-		initialize();
-				
-		//initialize lineNum
 		lineNum = 0;
 	}
 	
@@ -76,13 +73,6 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 		lineNum++;
 		return new TimeSeriesPoint(time, conc, getDerivative(line));
 	}
-	
-	/**
-	 * Derived time series loader own initialization
-	 * 
-	 * @throws TSLoaderException when input error or another exception is encountered.
-	 */
-	protected abstract void initialize() throws TSLoaderException;
 
 	/**
 	 * Recovers time value of point from input line. 
