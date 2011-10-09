@@ -54,7 +54,7 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 		try {
 			line = readLine();
 		} catch (IOException ioe) {
-			throw new TSLoaderException("tsl_io", "IO error", ioe); //generic IO error
+			throw new TSLoaderException("io", "IO error", ioe); //generic IO error
 		}
 		if (line == null) { //end of stream reached
 			return null;
@@ -63,11 +63,11 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 		
 		double time = getTime(line);
 		if (time < 0) {
-			throw new TSLoaderFormatException("tsl_neg_time", "Negative time value", lineNum, line);
+			throw new TSLoaderFormatException("neg_time", "Negative time value", lineNum, line);
 		}		
 		double conc = getConcentration(line);
 		if (conc < 0) {
-			throw new TSLoaderFormatException("tsl_neg_conc", "Negative concentration value.", lineNum, line);
+			throw new TSLoaderFormatException("neg_conc", "Negative concentration value.", lineNum, line);
 		}
 		
 		lineNum++;

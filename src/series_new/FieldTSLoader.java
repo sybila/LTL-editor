@@ -60,14 +60,14 @@ public class FieldTSLoader extends AbstractLineTSLoader {
 		try {
 			return Double.valueOf(fields[index]);
 		} catch (NumberFormatException nfe) {
-			throw new TSLoaderFormatException("tsl_num_in", "Unintelligible decimal number.", getLineNum(), line);
+			throw new TSLoaderFormatException("num_in", "Unintelligible decimal number.", getLineNum(), line);
 		}
 	}
 
 	@Override
 	protected void checkFormat(String line) throws TSLoaderFormatException {
 		if (splitLine(line).length < maxIndex) {
-			throw new TSLoaderFormatException("tsl_field_num", "Too few fields.", getLineNum(), line);
+			throw new TSLoaderFormatException("field_num", "Too few fields.", getLineNum(), line);
 		}
 	}
 
