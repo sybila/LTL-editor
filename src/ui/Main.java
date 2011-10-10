@@ -34,11 +34,11 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
-import ltl.XMLException;
 import series.CsvTSLoader;
 import series.TSLoaderException;
 import series.TimeSeries;
 import ui.ActionManager.ActionType;
+import xml.XMLException;
 
 /**
  * Main application window and controls.

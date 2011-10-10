@@ -15,11 +15,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import coordinates.Transformation;
-
 import selector.EventSelector;
 import selector.Selector;
 import selector.TransitionSelector;
+import xml.XMLException;
+import xml.XMLRepresentable;
+import coordinates.Transformation;
 
 /**
  * Model of graphic formula constituting of {@link Event}s and {@link Transition}.

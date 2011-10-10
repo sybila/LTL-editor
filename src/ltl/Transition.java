@@ -12,7 +12,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ui.Canvas;
-
+import xml.XMLException;
+import xml.XMLRepresentable;
 import coordinates.Transformation;
 
 /**

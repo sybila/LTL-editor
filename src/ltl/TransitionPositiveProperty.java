@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import xml.XMLException;
+
 /**
  * Property which has no fixed reference point and instead relies on other two other property references,
  * specifically concentrations of two {@link Event}s adjacent to a {@link Transition}.  

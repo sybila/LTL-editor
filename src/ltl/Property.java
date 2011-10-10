@@ -2,6 +2,8 @@
 //Full copyright notice found in src/LICENSE.  
 package ltl;
 
+import xml.XMLRepresentable;
+
 /**
  * Abstract property interval (such as time or species concentration). Defined by two endpoints, or <b>bounds</b>.
  * 

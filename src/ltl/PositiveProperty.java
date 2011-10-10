@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import xml.XMLException;
+
 /**
  * Positive property with lower bound zero (e.g. time, species concentration).
  * 

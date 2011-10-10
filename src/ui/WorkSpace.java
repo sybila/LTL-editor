@@ -37,7 +37,6 @@ import ltl.ModelChange;
 import ltl.Transition;
 import ltl.TransitionCyclicProperty;
 import ltl.TransitionPositiveProperty;
-import ltl.XMLException;
 import mutable.MouseAction;
 import mutable.MutableMouseListener;
 import mutable.MutableMouseMotionListener;
@@ -50,6 +49,7 @@ import selector.EventCreator;
 import selector.Selector;
 import series.TimeSeries;
 import ui.MouseActionManager.MouseActionType;
+import xml.XMLException;
 import coordinates.Transformation;
 
 /**
