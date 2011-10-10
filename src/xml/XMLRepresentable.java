@@ -1,6 +1,6 @@
 //Copyright (C) 2011 Tomáš Vejpustek
 //Full copyright notice found in src/LICENSE.  
-package ltl;
+package xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
