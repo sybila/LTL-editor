@@ -3,17 +3,15 @@
 package series;
 
 /**
- * Wrapper for time series input (e.g. a StringReader). Reads the time series sequentially from t=0.
+ * Wrapper for time series input (e.g. a StringReader). Expects time series data points to be in ascending time order.
+ * Time interval between points need not be uniform.
+ * 
+ * Initiation of a <code>TimeSeriesLoader</code> is expected to be a part of its constructor.
  * 
  * @author Tomáš Vejpustek
  *
  */
 public interface TimeSeriesLoader {
-
-	/**
-	 * @return Time interval between two consecutive time series points.
-	 */
-	public double getInterval();
 	
 	/**
 	 * Reads a single point. Used to read the points sequentially.

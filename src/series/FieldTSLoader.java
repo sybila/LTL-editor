@@ -1,6 +1,6 @@
 //Copyright (C) 2011 Tomáš Vejpustek
 //Full copyright notice found in src/LICENSE.
-package series_new;
+package series;
 
 import java.io.BufferedReader;
 

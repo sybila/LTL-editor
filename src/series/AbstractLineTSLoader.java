@@ -4,12 +4,12 @@ package series;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Basic operations on time series inputs with time, species concentration and its derivation
- * in given point on each line. Presumes interval consistency.
+ * in given point on each line.
+ * 
+ * <p>With each line, {@link #checkFormat(String)} is performed before {@link #getTime(String)}, {@link #getConcentration(String)} and {@link #getDerivative(String)}.
  * 
  * @author Tomáš Vejpustek
  *
@@ -17,8 +17,6 @@ import java.util.Queue;
 //NOTE: Cannot test interval consistency due to double rounding issues.
 public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 	private BufferedReader input;
-	private Queue<String> lines = new LinkedList<String>();
-	private double interval;
 	private int lineNum;
 	
 	/**
@@ -29,32 +27,6 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 	 */
 	public AbstractLineTSLoader(BufferedReader input) throws TSLoaderException{
 		this.input = input;
-		initialize();
-		
-		try {
-			String line;
-			
-			//"skip" first line
-			line = readLine();
-			checkFormat(line);
-			lines.offer(line);
-			
-			//read interval
-			line = readLine();
-			checkFormat(line);
-			interval = getTime(line);
-			if (interval < 0) {
-				throw new TSLoaderFormatException("tsl_negative_time", "Zero or negative time value.", 2, line);
-			}
-			if (interval == 0) {
-				throw new TSLoaderFormatException("tsl_zero_time", "Zero time on second line.", lineNum, line);
-			}
-			lines.offer(line);
-		} catch (IOException ioe) {
-			throw new TSLoaderException("tsl_io", "IO error", ioe);
-		}
-		
-		//initialize lineNum
 		lineNum = 0;
 	}
 	
@@ -75,42 +47,32 @@ public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
 	protected int getLineNum() {
 		return lineNum;
 	}
-	
-	@Override
-	public double getInterval() {
-		return interval;
-	}
 
 	@Override
 	public TimeSeriesPoint readPoint() throws TSLoaderException {
-		String line = lines.poll();
-		if (line == null) {
-			try {
-				line = readLine();
-			} catch (IOException ioe) {
-				throw new TSLoaderException("tsl_io", "IO error", ioe);
-			}
+		String line;
+		try {
+			line = readLine();
+		} catch (IOException ioe) {
+			throw new TSLoaderException("io", "IO error", ioe); //generic IO error
 		}
-		if (line == null) {
+		if (line == null) { //end of stream reached
 			return null;
 		}
 		checkFormat(line);
-	
-		double concentration = getConcentration(line);
-		if (concentration < 0) {
-			throw new TSLoaderFormatException("tsl_negative_concentration", "Negative concentration.", lineNum, line);
+		
+		double time = getTime(line);
+		if (time < 0) {
+			throw new TSLoaderFormatException("neg_time", "Negative time value", lineNum, line);
+		}		
+		double conc = getConcentration(line);
+		if (conc < 0) {
+			throw new TSLoaderFormatException("neg_conc", "Negative concentration value.", lineNum, line);
 		}
-			
+		
 		lineNum++;
-		return new TimeSeriesPoint(concentration, getDerivative(line));
+		return new TimeSeriesPoint(time, conc, getDerivative(line));
 	}
-	
-	/**
-	 * Derived time series loader own initialization
-	 * 
-	 * @throws TSLoaderException when input error or another exception is encountered.
-	 */
-	protected abstract void initialize() throws TSLoaderException;
 
 	/**
 	 * Recovers time value of point from input line. 

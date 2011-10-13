@@ -3,11 +3,10 @@
 package series;
 
 import java.text.MessageFormat;
-import java.util.ResourceBundle;
 
 /**
  * Signals wrong format of input when loading time series via an implementation of {@link TimeSeriesLoader}.
- * 
+ * In addition to error description (as of {@link TSLoaderException}) prints the line where error was encountered and its number.
  * 
  * @author Tomáš Vejpustek
  *
@@ -33,8 +32,10 @@ public class TSLoaderFormatException extends TSLoaderException {
 
 	@Override
 	public String getLocalizedMessage() {
-		ResourceBundle errors = ResourceBundle.getBundle("series.errors");
-		return errors.getString(getType()) + "\n" + MessageFormat.format(errors.getString("tsl_line"), lineNum, lineString);
+		StringBuilder out = new StringBuilder(super.getLocalizedMessage());
+		out.append('\n');
+		out.append(MessageFormat.format(getBundle().getString("tsl_line"), lineNum, lineString));
+		return out.toString();
 	}
 
 }

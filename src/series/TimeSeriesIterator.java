@@ -2,6 +2,7 @@
 //Full copyright notice found in src/LICENSE.  
 package series;
 
+
 /**
  * Iterator over points of time series. To generate one use @link {@link TimeSeries#getIterator()}.
  * 
@@ -12,11 +13,6 @@ package series;
 public interface TimeSeriesIterator {
 
 	/**
-	 * Resets iterator to the beginning of the time series, i.e. <b>before</b> the first point in the series.
-	 */
-	public void reset();
-
-	/**
 	 * @return <code>true</code> if time series has more elements.
 	 */
 	public boolean hasNext();
@@ -24,16 +20,6 @@ public interface TimeSeriesIterator {
 	/**
 	 * @return Next point in time series or <code>null</code> if there is none.
 	 */
+	//TODO throws exception when no next, recode iterations (Canvas, somewhere in coordinates)
 	public TimeSeriesPoint next();
-
-	/**
-	 * @return Current point in time series.
-	 */
-	public TimeSeriesPoint getPoint();
-
-	/**
-	 * @return Time of current point in time series.
-	 */
-	public double getTime();
-
 }

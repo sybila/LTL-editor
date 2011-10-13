@@ -23,6 +23,7 @@ import ltl.Property.Bound;
 import selector.Selector;
 import series.TimeSeries;
 import series.TimeSeriesIterator;
+import series.TimeSeriesPoint;
 import coordinates.Transformation;
 
 /**
@@ -98,11 +99,12 @@ public class Canvas {
 		canvas.setStroke(SERIES_STROKE);
 		
 		Point2D start, end;
-		TimeSeriesIterator iter = series.getIterator();
+		TimeSeriesIterator iter = series.iterator();
 		if (!iter.hasNext()) {return;} //for the case of empty time series
 		start = new Point2D.Double(0, iter.next().getConcentration());
-		while (iter.next() != null) {
-			end = new Point2D.Double(iter.getTime(), iter.getPoint().getConcentration());
+		TimeSeriesPoint point;
+		while (null != (point = iter.next())) {
+			end = new Point2D.Double(point.getTime(), point.getConcentration());
 			canvas.draw(new Line2D.Double(coord.getX(start.getX()), coord.getY(start.getY()), coord.getX(end.getX()), coord.getY(end.getY())));
 			start = end;
 		}

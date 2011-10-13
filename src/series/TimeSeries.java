@@ -1,82 +1,64 @@
 //Copyright (C) 2011 Tomáš Vejpustek
-//Full copyright notice found in src/LICENSE.  
+//Full copyright notice found in src/LICENSE.
 package series;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
- * Time series: a sequence of a species concentrations and its derivatives measured at multiples of a time interval.
+ * A sequence of {@link TimeSeriesPoint} in ascending time order.
  * 
- * Used as an underlying data structure for the time series which is annotated by user. Is not supposed to change after loading.
+ * Underlying data structure to be annotated by a user. Not supposed to change after loading.
  * 
  * @author Tomáš Vejpustek
  *
  */
 public class TimeSeries {
-	/**
-	 * Basic private implementation of {@link TimeSeriesIterator}.
-	 * 
-	 * @author Tomáš Vejpustek
-	 */
+	private List<TimeSeriesPoint> points = new ArrayList<TimeSeriesPoint>();
+	
 	private class TimeSeriesIteratorImpl implements TimeSeriesIterator {
-		private TimeSeries parent;
-		private List<TimeSeriesPoint> series;
-		int index;
+		private ListIterator<TimeSeriesPoint> iter;
 		
-		/**
-		 * Constructs iterator over given series. Used by {@link TimeSeries#getIterator()}.
-		 * 
-		 * @param parent Parent series.
-		 * @param series Inner list of points of parent series.
-		 */
-		public TimeSeriesIteratorImpl(TimeSeries parent, List<TimeSeriesPoint> series) {
-			this.parent = parent;
-			this.series = series;
-			reset();
-		}
-		
-		@Override
-		public void reset() {
-			index = -1;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return (series.size() > index+1);
-		}
-		
-		@Override
-		public TimeSeriesPoint next() {
-			if (hasNext()) {
-				index++;
-				return getPoint();
-			} else {
-				return null;
-			}
-		}	
-		
-		@Override
-		public TimeSeriesPoint getPoint() {
-			return series.get(index);
+		public TimeSeriesIteratorImpl(ListIterator<TimeSeriesPoint> iterator) {
+			iter = iterator;
 		}
 
 		@Override
-		public double getTime() {
-			return index*parent.getInterval();
+		public boolean hasNext() {
+			return iter.hasNext();
+		}
+
+		@Override
+		public TimeSeriesPoint next() {
+			//TODO different implementation of iterations
+			try {
+				return iter.next();
+			} catch (NoSuchElementException nsee) {
+				return null;
+			}
 		}
 	}
 	
-	private List<TimeSeriesPoint> points = new ArrayList<TimeSeriesPoint>();
-	private double interval;
-
 	/**
-	 * Creates an empty time series.
+	 * Creates empty time series.
 	 */
-	public TimeSeries() {
-		interval = 0;
+	public TimeSeries() {}
+	
+	/**
+	 * Loads time series from given source (usually a file).
+	 * @param source Wrapper of designated input.
+	 * @throws TSLoaderException when an error during loading is encountered.
+	 */
+	public TimeSeries(TimeSeriesLoader source) throws TSLoaderException {
+		//TODO ascending order testing?
+		TimeSeriesPoint input;
+		while (null != (input = source.readPoint())) {
+			points.add(input);
+		}
 	}
-
+	
 	/**
 	 * @return <code>true</code> when there is no point in this time series, <code>false</code> otherwise.
 	 */
@@ -85,36 +67,17 @@ public class TimeSeries {
 	}
 	
 	/**
-	 * Loads time series from given source (usually file).
-	 * @param source Wrapper of given input.
-	 * @throws TSLoaderException when IO error during loading is encountered.
+	 * @return Iterator over the points comprising this time series.
 	 */
-	public TimeSeries(TimeSeriesLoader source) throws TSLoaderException {
-		interval = source.getInterval();
-		
-		TimeSeriesPoint input;
-		while (null != (input = source.readPoint())) {
-			points.add(input);
-		}
-	}
-	/**
-	 * @return Length of time interval between consecutive points.
-	 */
-	public double getInterval() {
-		return interval;
-	}
-	
-	/**
-	 * @return Iterator over time series.
-	 */
-	public TimeSeriesIterator getIterator() {
-		return new TimeSeriesIteratorImpl(this, points);
+	public TimeSeriesIterator iterator() {
+		return new TimeSeriesIteratorImpl(points.listIterator());
 	}
 	
 	/**
 	 * @return Duration of time series, i.e. the interval between its first and last points.
 	 */
 	public double getLength() {
-		return points.size()*getInterval();
+		return points.get(points.size() - 1).getTime();
 	}
+	
 }

@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 
 import series.TimeSeries;
 import series.TimeSeriesIterator;
+import series.TimeSeriesPoint;
 
 /**
  * Transforms coordinates of a {@link ui.WorkSpace} to time series coordinates and vice versa.
@@ -68,10 +69,11 @@ public class Transformation {
 		Scale timeScale = new LinearScale(width, series.getLength());
 		
 		double max = 0;
-		TimeSeriesIterator iter = series.getIterator();
-		while (iter.next() != null) {
-			if (iter.getPoint().getConcentration() > max) {
-				max = iter.getPoint().getConcentration();
+		TimeSeriesIterator iter = series.iterator();
+		TimeSeriesPoint point;
+		while (null != (point = iter.next())) {
+			if (point.getConcentration() > max) {
+				max = point.getConcentration();
 			}
 		}
 		Scale concScale = new LinearScale(height-PADDING, max);
