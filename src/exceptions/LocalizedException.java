@@ -34,6 +34,7 @@ public abstract class LocalizedException extends Exception {
 	 */
 	public LocalizedException(String type, String message, Throwable cause) {
 		super(message,cause);
+		this.type = type;
 	}
 	
 	/**

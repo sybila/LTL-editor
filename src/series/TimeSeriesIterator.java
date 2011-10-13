@@ -23,6 +23,5 @@ public interface TimeSeriesIterator {
 	 * @return Next point in time series when there is one.
 	 * @throws NoSuchElementException in case there is no next point.
 	 */
-	//TODO throws exception when no next, recode iterations (Canvas, somewhere in coordinates)
 	public TimeSeriesPoint next();
 }

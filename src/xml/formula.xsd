@@ -42,6 +42,16 @@ elementFormDefault="qualified">
 	
 	<xs:complexType name="series">
 		<xs:all>
+			<xs:element name="source" type="xs:anyURI"/>
+			<xs:element name="loader">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:anyAttribute processContents="skip"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 		</xs:all>
 	</xs:complexType>
 
