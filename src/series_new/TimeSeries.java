@@ -4,6 +4,7 @@ package series_new;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A sequence of {@link TimeSeriesPoint} in ascending time order.
@@ -15,6 +16,24 @@ import java.util.List;
  */
 public class TimeSeries {
 	private List<TimeSeriesPoint> points = new ArrayList<TimeSeriesPoint>();
+	
+	private class TimeSeriesIteratorImpl implements TimeSeriesIterator {
+		private ListIterator<TimeSeriesPoint> iter;
+		
+		public TimeSeriesIteratorImpl(ListIterator<TimeSeriesPoint> iterator) {
+			iter = iterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return iter.hasNext();
+		}
+
+		@Override
+		public TimeSeriesPoint next() {
+			return iter.next();
+		}
+	}
 	
 	/**
 	 * Creates empty time series.
@@ -39,6 +58,10 @@ public class TimeSeries {
 	 */
 	public boolean isEmpty() {
 		return points.isEmpty();
+	}
+	
+	public TimeSeriesIterator iterator() {
+		return new TimeSeriesIteratorImpl(points.listIterator());
 	}
 	
 }
