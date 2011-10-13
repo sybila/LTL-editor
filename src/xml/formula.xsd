@@ -42,7 +42,7 @@ elementFormDefault="qualified">
 	
 	<xs:complexType name="series">
 		<xs:all>
-		<xs/all>
+		</xs:all>
 	</xs:complexType>
 
 	<xs:element name="formula">

@@ -9,26 +9,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
 import ltl.Event;
 import ltl.FormulaBuilder;
@@ -40,15 +25,11 @@ import ltl.TransitionPositiveProperty;
 import mutable.MouseAction;
 import mutable.MutableMouseListener;
 import mutable.MutableMouseMotionListener;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-
 import selector.EventCreator;
 import selector.Selector;
 import series.TimeSeries;
 import ui.MouseActionManager.MouseActionType;
+import xml.FormulaStorage;
 import xml.XMLException;
 import coordinates.Transformation;
 
@@ -244,32 +225,8 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	 */
 	public void writeModel(OutputStream os) throws XMLException{
 		unselect();
-		DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuild;
-		try {
-			docBuild = docFac.newDocumentBuilder();
-		} catch (ParserConfigurationException pce) {
-			throw new XMLException("err_xml_general", "Parser could not be configured.");
-		}
-		
-		Document doc = docBuild.newDocument();
-		Element mod = (Element)model.toXML(doc);
-		mod.setAttribute("xmlns", "http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator"); //set name space
-		doc.appendChild(mod);
-		
-		TransformerFactory transFac = TransformerFactory.newInstance();
-		Transformer trans;
-		try {
-			trans = transFac.newTransformer();
-		} catch (TransformerConfigurationException tce) {
-			throw new XMLException("err_xml_general", "Transformer could not be configured.");
-		}
-		trans.setOutputProperty(OutputKeys.INDENT, "yes");
-		try {
-			trans.transform(new DOMSource(doc), new StreamResult(os));
-		} catch (TransformerException te) {
-			throw new XMLException("unknown", "XML Transformer could not write to the file.", te);
-		}
+		FormulaStorage fs = new FormulaStorage();
+		fs.storeFormula(os, model);
 	}
 
 	/**
@@ -277,45 +234,10 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	 */
 	public void loadModel(InputStream is) throws XMLException{
 		unselect();
-		SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-		Schema schema;
-		try {
-			schema = sf.newSchema(getClass().getResource("formula.xsd"));
-		} catch (SAXException saxe) { //schema cannot be loaded
-			throw new XMLException("err_xml_schema", "Document schema could not be read.");
-		}
-		Validator valid = schema.newValidator();
-		
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		DocumentBuilder builder;
-		try {
-			builder = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException pce) {
-			throw new XMLException("err_xml_general", "Parser could not be configured.");
-		}
-		Document doc;
-		try {
-			doc = builder.parse(is);
-		} catch (SAXException saxe) { //not an XML
-			throw new XMLException("err_xml_parse", "Document parse error occurred.", saxe);
-		} catch (IOException ioe) {
-			throw new XMLException("err_input", "An IO error has occurred during document parsing.", ioe);
-		}
-		DOMResult result = new DOMResult();
-		try {
-			valid.validate(new DOMSource(doc), result);
-		} catch (SAXException saxe) {
-			throw new XMLException("err_xml_validation", "Document validation error occurred.", saxe);
-		} catch (IOException ioe) {
-			throw new XMLException("err_input", "An IO error has occurred during document validation.", ioe);
-		}
-		Document input = (Document)result.getNode();
-		input.normalize();
-		
-		Model loaded = new Model();
-		loaded.loadFromXML(input.getDocumentElement());
-		model = loaded;
+		FormulaStorage fs = new FormulaStorage();
+		Model output = new Model();
+		fs.loadFormula(is, output);
+		model = output;
 		refresh();
 	}
 	

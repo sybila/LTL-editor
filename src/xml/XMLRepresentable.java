@@ -30,5 +30,5 @@ public interface XMLRepresentable {
 	 * @param node XML representation of object. 
 	 */
 	public void loadFromXML(Node node) throws XMLException;
-	//TODO should probably be static ...
+	//TODO should probably be static ... or rather not
 }
