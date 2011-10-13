@@ -5,7 +5,6 @@ package series;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
 
 /**
  * A sequence of {@link TimeSeriesPoint} in ascending time order.
@@ -32,12 +31,7 @@ public class TimeSeries {
 
 		@Override
 		public TimeSeriesPoint next() {
-			//TODO different implementation of iterations
-			try {
-				return iter.next();
-			} catch (NoSuchElementException nsee) {
-				return null;
-			}
+			return iter.next();
 		}
 	}
 	

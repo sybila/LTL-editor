@@ -2,6 +2,8 @@
 //Full copyright notice found in src/LICENSE.  
 package series;
 
+import java.util.NoSuchElementException;
+
 
 /**
  * Iterator over points of time series. To generate one use @link {@link TimeSeries#getIterator()}.
@@ -13,12 +15,13 @@ package series;
 public interface TimeSeriesIterator {
 
 	/**
-	 * @return <code>true</code> if time series has more elements.
+	 * @return <code>true</code> if time series has more points.
 	 */
 	public boolean hasNext();
 
 	/**
-	 * @return Next point in time series or <code>null</code> if there is none.
+	 * @return Next point in time series when there is one.
+	 * @throws NoSuchElementException in case there is no next point.
 	 */
 	//TODO throws exception when no next, recode iterations (Canvas, somewhere in coordinates)
 	public TimeSeriesPoint next();

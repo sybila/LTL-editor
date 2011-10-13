@@ -70,8 +70,9 @@ public class Transformation {
 		
 		double max = 0;
 		TimeSeriesIterator iter = series.iterator();
-		TimeSeriesPoint point;
-		while (null != (point = iter.next())) {
+		
+		while (iter.hasNext()) {
+			TimeSeriesPoint point = iter.next();
 			if (point.getConcentration() > max) {
 				max = point.getConcentration();
 			}
