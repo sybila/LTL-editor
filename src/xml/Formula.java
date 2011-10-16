@@ -2,6 +2,10 @@
 //Full copyright notice found in src/LICENSE.
 package xml;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,27 +25,59 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import ltl.Model;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Steps necessary to store formula to XML and retrieve it.
- * @deprecated moved to {@link Formula}
+ * Abstraction of formula as a target of editing. Comprises:
+ * <ul>
+ *  <li>actual formula model</li>
+ *  <li>information necessary to save the formula (i.e. file)</li>
+ *  <li>log of changes to formula (undo and redo functionality)</li>
+ *  <li>underlying time series information (such as source, loader type, ...)</li>
+ * </ul>
+ * 
+ * Includes functionality to access its components and store and load the formula.
  * 
  * @author Tomáš Vejpustek
- * 
+ *
  */
-public class FormulaStorage {
+public class Formula {
 	private static final String NAMESPACE = "http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator";
+	private Model model;
+	private File formulaFile = null;
 	
 	/**
-	 * Transforms formula to XML and prints it.
-	 * @param os Stream where to print the formula
-	 * @param formula The formula to be transformed to XML
-	 * @throws XMLException when an error during transformation or printing occurs.
+	 * Creates a new formula with empty model.
 	 */
-	public void storeFormula(OutputStream os, XMLRepresentable formula) throws XMLException {
+	public Formula() {
+		model = new Model();
+	}
+	
+	/**
+	 * Creates a formula with specified input file. 
+	 * @param formulaFile
+	 */
+	public Formula(File formulaFile) {
+		this.formulaFile = formulaFile;
+	}
+	
+	/**
+	 * Transforms formula into XML document and saves it to the file. 
+	 * @throws IllegalStateException when no output file is specified.
+	 * @throws FileNotFoundException when specified file was invalid.
+	 * @throws XMLException when error during XML processing occurred.
+	 */
+	public void save() throws FileNotFoundException, XMLException {
+		if (getFormulaFile() == null) {
+			throw new IllegalStateException("No output file specified.");
+		}
+		OutputStream os = new FileOutputStream(getFormulaFile());
 		DocumentBuilderFactory docFac = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuild;
 		try {
@@ -51,8 +87,10 @@ public class FormulaStorage {
 		}
 		
 		Document doc = docBuild.newDocument();
-		Element form = (Element)formula.toXML(doc);
+		
+		Element form = (Element)model.toXML(doc);
 		form.setAttribute("xmlns", NAMESPACE); //set name space
+		
 		doc.appendChild(form);
 		
 		TransformerFactory transFac = TransformerFactory.newInstance();
@@ -68,17 +106,23 @@ public class FormulaStorage {
 		} catch (TransformerException te) {
 			throw new XMLException("output", "XML Transformer could not write to the file.", te);
 		}
+		try {
+			os.close();
+		} catch (IOException ioe) {
+			throw new XMLException("output", "File could not be closed.", ioe);
+		}
 	}
 	
 	/**
-	 * Reads and validates XML document from input and transforms it into object.
-	 * 
-	 * @param is Stream to read from.
-	 * @param output Object (or a type of object) which is loaded from XML. Warning:
-	 * <b>Always use a new object, as an error during input leaves it in an undefined state.</b> 
-	 * @throws XMLException when error during reading, parsing, validation or transfromation occurs.
+	 * Reads and validates the file and transforms it into formula.
+	 * @throws when no input file is specified
+	 * @throws FileNotFoundException when input file is invalid.
 	 */
-	public void loadFormula(InputStream is, XMLRepresentable output) throws XMLException {
+	public void load() throws FileNotFoundException, XMLException {
+		if (getFormulaFile() == null) {
+			throw new IllegalStateException("No input file specified.");
+		}
+		InputStream is = new FileInputStream(getFormulaFile());
 		SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 		Schema schema;
 		try {
@@ -116,7 +160,56 @@ public class FormulaStorage {
 		Document input = (Document)result.getNode();
 		input.normalize();
 		
-		output.loadFromXML(input.getDocumentElement());
+		parseXML(input.getDocumentElement());
+		
+		try {
+			is.close();
+		} catch (IOException ioe) {
+			throw new XMLException("input", "Could not close the input file.", ioe);
+		}
+	}
+	
+	
+	
+	/**
+	 * Parses XML document into formula.
+	 * @param root root Element of the document.
+	 * @throws XMLException
+	 */
+	private void parseXML(Element root) throws XMLException {
+		NodeList nodes = root.getChildNodes();
+		for (int index = 0; index < nodes.getLength(); index++) {
+			Node n = nodes.item(index);
+			if (n.getNodeName().equals("")) { //template
+				//TODO a stub
+			}
+		}
+		Model newModel = new Model();
+		newModel.loadFromXML(root);
+		
+		//so far without errors -- time to replace
+		model = newModel;
+	}
+	
+	/**
+	 * @return Model of the formula.
+	 */
+	public Model getModel() {
+		return model;
+	}
+	
+	/**
+	 * Specifies file containing the formula.
+	 */
+	public void setFormulaFile(File formulaFile) {
+		this.formulaFile = formulaFile;
+	}
+	
+	/**
+	 * @return File containing the formula.
+	 */
+	public File getFormulaFile() {
+		return formulaFile;
 	}
 	
 }
