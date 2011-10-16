@@ -2,6 +2,9 @@
 //Full copyright notice found in src/LICENSE.  
 package series;
 
+import java.util.Map;
+
+
 /**
  * Wrapper for time series input (e.g. a StringReader). Expects time series data points to be in ascending time order.
  * Time interval between points need not be uniform.
@@ -20,4 +23,10 @@ public interface TimeSeriesLoader {
 	 * @throws TSLoaderException when IO error is encountered.
 	 */
 	public TimeSeriesPoint readPoint() throws TSLoaderException;
+	
+	/**
+	 * Transforms given loader into a map of string parameters. One of them always should be "name", which determines the type of loader.
+	 * @return <code>Map</code> of parameters.
+	 */
+	public Map<String, String> export();
 }

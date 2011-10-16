@@ -3,6 +3,8 @@
 package series;
 
 import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Reads time series from a CSV-like file which is separated into lines and fields (columns).
@@ -11,6 +13,12 @@ import java.io.BufferedReader;
  *
  */
 public class FieldTSLoader extends AbstractLineTSLoader {
+	static final String NAME = "field";
+	static final String P_SEPARATOR = "separator";
+	static final String P_TIME_INDEX = "timeIndex";
+	static final String P_CONC_INDEX = "concIndex";
+	static final String P_DERIV_INDEX ="derivIndex";
+	
 	private int time,conc,deriv; //field indices
 	private int maxIndex;
 	private String separator; //field separators
@@ -85,4 +93,17 @@ public class FieldTSLoader extends AbstractLineTSLoader {
 	protected double getTime(String line) throws TSLoaderFormatException {
 		return getField(line, time);
 	}
+	
+	@Override
+	public Map<String,String> export() {
+		Map<String, String> out = new HashMap<String, String>();
+		out.put("name", NAME);
+		out.put(P_SEPARATOR, separator);
+		out.put(P_TIME_INDEX, Integer.toString(time));
+		out.put(P_CONC_INDEX, Integer.toString(conc));
+		out.put(P_DERIV_INDEX, Integer.toString(deriv));
+		return out;
+	}
+	
+	
 }

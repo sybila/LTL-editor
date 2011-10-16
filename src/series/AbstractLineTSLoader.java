@@ -5,6 +5,7 @@ package series;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+
 /**
  * Basic operations on time series inputs with time, species concentration and its derivation
  * in given point on each line.
@@ -15,7 +16,7 @@ import java.io.IOException;
  *
  */
 //NOTE: Cannot test interval consistency due to double rounding issues.
-public abstract class AbstractLineTSLoader implements TimeSeriesLoader {
+public abstract class AbstractLineTSLoader extends AbstractTSLoader {
 	private BufferedReader input;
 	private int lineNum;
 	
