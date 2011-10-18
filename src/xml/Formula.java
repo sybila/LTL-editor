@@ -49,22 +49,21 @@ import org.xml.sax.SAXException;
  */
 public class Formula {
 	private static final String NAMESPACE = "http://www.fi.muni.cz/~xvejpust/TimeSeriesLTLAnnotator";
-	private Model model;
+	private Model model = new Model();
 	private File formulaFile = null;
+	private TimeSeriesSource tsSource = null;
 	
 	/**
 	 * Creates a new formula with empty model.
 	 */
-	public Formula() {
-		model = new Model();
-	}
+	public Formula() {}
 	
 	/**
 	 * Creates a formula with specified input file. 
 	 * @param formulaFile
 	 */
 	public Formula(File formulaFile) {
-		this.formulaFile = formulaFile;
+		setFormulaFile(formulaFile);
 	}
 	
 	/**
@@ -87,10 +86,11 @@ public class Formula {
 		}
 		
 		Document doc = docBuild.newDocument();
-		
 		Element form = (Element)model.toXML(doc);
 		form.setAttribute("xmlns", NAMESPACE); //set name space
-		
+		if (tsSource != null) {
+			form.appendChild(tsSource.toXML(doc));
+		}
 		doc.appendChild(form);
 		
 		TransformerFactory transFac = TransformerFactory.newInstance();
@@ -168,20 +168,23 @@ public class Formula {
 			throw new XMLException("input", "Could not close the input file.", ioe);
 		}
 	}
-	
-	
-	
+		
 	/**
 	 * Parses XML document into formula.
 	 * @param root root Element of the document.
 	 * @throws XMLException
 	 */
 	private void parseXML(Element root) throws XMLException {
+		TimeSeriesSource newTsSource = new TimeSeriesSource();
+		boolean hasTsSource = false;
+		newTsSource.setFormulaFile(formulaFile);
+		
 		NodeList nodes = root.getChildNodes();
 		for (int index = 0; index < nodes.getLength(); index++) {
 			Node n = nodes.item(index);
-			if (n.getNodeName().equals("")) { //template
-				//TODO a stub
+			if (n.getNodeName().equals("series")) { //template
+				newTsSource.loadFromXML(n);
+				hasTsSource = true;
 			}
 		}
 		Model newModel = new Model();
@@ -189,6 +192,9 @@ public class Formula {
 		
 		//so far without errors -- time to replace
 		model = newModel;
+		if (hasTsSource) {
+			tsSource = newTsSource;
+		}
 	}
 	
 	/**
@@ -203,6 +209,9 @@ public class Formula {
 	 */
 	public void setFormulaFile(File formulaFile) {
 		this.formulaFile = formulaFile;
+		if (tsSource != null) {
+			tsSource.setFormulaFile(formulaFile);
+		}
 	}
 	
 	/**
