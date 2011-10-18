@@ -15,40 +15,71 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import series.AbstractTSLoader;
 import series.TimeSeriesLoader;
 
 /**
- * Describes method of importing a time series.
+ * Describes method of importing a time series. Used by {@link AbstractTSLoader} to get a {@link TimeSeriesLoader}.
  * 
- * Comprises of source file and a set of <code>String</code> parameters.
+ * Comprises of source file and a set of <code>String</code> parameters. May need access to file containing the formula
+ * to relativize the URI of time series source  (if none is set, absolute URI is used).
  * 
  * @author Tomáš Vejpustek
  *
  */
 public class TimeSeriesSource implements XMLRepresentable {
 	private File srcFile = null;
+	private File formFile = null;
 	private Map<String, String> params = null;
 	
+	/**
+	 * Creates uninitialized time series source. 
+	 */
 	public TimeSeriesSource() {}
 	
+	/**
+	 * @return Source file of the time series.
+	 */
 	public File getSourceFile() {
 		return srcFile;
 	}
 	
+	/**
+	 * Sets source file of the time series.
+	 * @param target
+	 */
 	public void setSourceFile(File target) {
 		srcFile = target;
 	}
 	
+	/**
+	 * @return Name (and therefore the type) of the loader.
+	 */
 	public String getLoaderName() {
 		return params.get("name");
 	}
 	
+	/**
+	 * Returns parameter of time series loader according to its name.
+	 * @return Parameter of the name <code>name</code>.
+	 */
 	public String getParameter(String name) {
 		return params.get(name);
 	}
 	
+	/**
+	 * Sets loader parameters from existing {@link TimeSeriesLoader}.
+	 */
 	public void setLoader(TimeSeriesLoader target) {
 		params = target.export();
+	}
+	
+	/**
+	 * Sets file containing the formula used to relativize URI of time series source.
+	 * @param target A file or <code>null</code>, which means absolute URI is used.
+	 */
+	public void setFormulaFile(File target) {
+		formFile = target;
 	}
 
 	@Override
@@ -59,11 +90,14 @@ public class TimeSeriesSource implements XMLRepresentable {
 	@Override
 	public Node toXML(Document document, String name) {
 		Element out = document.createElement(name);
-		URI uri = srcFile.toURI(); //TODO somehow relativize it -- to formulaFile (quite a problem)
+		URI outURI = srcFile.toURI();
+		if (formFile != null) {
+			outURI = formFile.toURI().relativize(outURI);
+		}
 		
 		//series
 		Element src = document.createElement("source");
-		src.appendChild(document.createTextNode(uri.toString()));
+		src.appendChild(document.createTextNode(outURI.toString()));
 		out.appendChild(src);
 		
 		//loader
@@ -88,7 +122,11 @@ public class TimeSeriesSource implements XMLRepresentable {
 			Node n = nodes.item(index);
 			if (n.getNodeName().equals("source")) {
 				try {
-					newSrc = new File(new URI(n.getFirstChild().getNodeValue()));
+					URI inURI = new URI(n.getFirstChild().getNodeValue());
+					if (formFile != null) {
+						inURI = formFile.toURI().resolve(inURI);
+					}
+					newSrc = new File(inURI);
 				} catch (DOMException dome) {
 					throw new XMLException("general", "Exception when parsing URI.", dome);
 				} catch (URISyntaxException urise) {
