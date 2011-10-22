@@ -35,7 +35,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 import ltl.Model;
-
+import series.AbstractTSLoader;
 import series.CsvTSLoader;
 import series.TSLoaderException;
 import series.TimeSeries;
@@ -232,6 +232,17 @@ public class Main extends JFrame {
 							JOptionPane.showMessageDialog(Main.this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formulaeFC.getSelectedFile().toString()), labelsRB.getString("err_input"), JOptionPane.ERROR_MESSAGE);
 						} catch (XMLException xmle) {
 							JOptionPane.showMessageDialog(Main.this, xmle.getLocalizedMessage(), labelsRB.getString("err_input"), JOptionPane.ERROR_MESSAGE);
+						}
+						try {
+							TimeSeriesLoader loader = AbstractTSLoader.getLoader(formula.getTimeSeriesSource());
+							TimeSeries series = new TimeSeries(loader);
+							workspace.setTimeSeries(series);
+							actions.getAction(ActionType.SWITCH_TS_VISIBILITY).setEnabled(true);
+							showTimeSeries.setSelected(true);
+						} catch (FileNotFoundException fnfe) {
+							JOptionPane.showMessageDialog(Main.this, MessageFormat.format(messagesRB.getString("ts_not_loaded"), fnfe.getLocalizedMessage()), labelsRB.getString("err_input"), JOptionPane.WARNING_MESSAGE);
+						} catch (TSLoaderException tsle) {
+							JOptionPane.showMessageDialog(Main.this, MessageFormat.format(messagesRB.getString("ts_not_loaded"), tsle.getLocalizedMessage()), labelsRB.getString("err_input"), JOptionPane.WARNING_MESSAGE);
 						}
 						workspace.repaint();
 					}
