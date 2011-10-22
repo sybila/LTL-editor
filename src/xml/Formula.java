@@ -33,6 +33,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import series.TimeSeriesLoader;
+
 /**
  * Abstraction of formula as a target of editing. Comprises:
  * <ul>
@@ -209,6 +211,24 @@ public class Formula {
 	 */
 	public TimeSeriesSource getTimeSeriesSource() {
 		return tsSource;
+	}
+
+	/**
+	 * Adds new source of time series to this formula.
+	 * @param sourceFile Souce file of time series
+	 * @param loader loader of time series
+	 */
+	public void setTimeSeriesSource(File sourceFile, TimeSeriesLoader loader) {
+		tsSource = new TimeSeriesSource();
+		tsSource.setSourceFile(sourceFile);
+		tsSource.setLoader(loader);
+	}
+	
+	/**
+	 * Removes source of time series from this formula.
+	 */
+	public void removeTimeSeriesSource() {
+		tsSource = null;
 	}
 	
 	/**
