@@ -9,8 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
@@ -29,8 +27,6 @@ import selector.EventCreator;
 import selector.Selector;
 import series.TimeSeries;
 import ui.MouseActionManager.MouseActionType;
-import xml.FormulaStorage;
-import xml.XMLException;
 import coordinates.Transformation;
 
 /**
@@ -46,7 +42,6 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	private StatusBar statusBar;
 	private Transformation coord;
 	private TimeSeries series = new TimeSeries(); //empty time series
-	private Model model = new Model();
 	
 	private boolean timeSeriesVisible = true;
 	
@@ -90,7 +85,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 						active.startMove(p);
 						refresh();
 					} else {
-						model.unselect();
+						getModel().unselect();
 						active = null;
 					}
 					getParentForm().setPrimitiveSelected(false);
@@ -102,7 +97,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 			public void actionPerformed(MouseEvent e) {
 				Point2D p = new Point2D.Double(e.getX(), e.getY());
 				if (active == null || (!active.contains(p) && !active.objectContains(p))) {
-					Selector selected = model.getSelected(p, coord);
+					Selector selected = getModel().getSelected(p, coord);
 					if (selected != null) {
 						active = selected;
 						getParentForm().setPrimitiveSelected(true);
@@ -120,7 +115,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 						active.startMove(p);
 						refresh();
 					} else {
-						model.unselect();
+						getModel().unselect();
 						active = null;
 					}
 					getParentForm().setPrimitiveSelected(false);
@@ -152,8 +147,8 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 						} else {
 							change = active.endMove(new Point2D.Double(e.getX(), e.getY()));
 						}
-						model.applyChange(change);
-						active = change.selector(model, coord);
+						getModel().applyChange(change);
+						active = change.selector(getModel(), coord);
 						if (active != null) {
 							getParentForm().setPrimitiveSelected(true);
 						}
@@ -165,9 +160,9 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 		actions.setMouseAction(MouseActionType.DELETE_PRIMITIVE, new MouseAction() {
 			@Override
 			public void actionPerformed(MouseEvent e) {
-				Selector selected = model.getSelected(new Point2D.Double(e.getX(), e.getY()), coord);
+				Selector selected = getModel().getSelected(new Point2D.Double(e.getX(), e.getY()), coord);
 				if (selected != null) {
-					model.applyChange(selected.delete());
+					getModel().applyChange(selected.delete());
 					refresh();
 				}
 			}
@@ -183,13 +178,13 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 			canvas.drawTimeSeries(series);
 		}
 		
-		Iterator<Transition> transitions = model.getTransitionsIterator();
+		Iterator<Transition> transitions = getModel().getTransitionsIterator();
 		while (transitions.hasNext()) {
 			Transition newTrans = transitions.next();
 			canvas.drawTransition(newTrans);
 		}
 		
-		Iterator<Event> events = model.getEventsIterator();
+		Iterator<Event> events = getModel().getEventsIterator();
 		while (events.hasNext()) {
 			Event newEvent = events.next();
 			canvas.drawEvent(newEvent);
@@ -221,32 +216,11 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	}
 	
 	/**
-	 * Writes model as an XML structure into output stream (e.g. a file).
-	 */
-	public void writeModel(OutputStream os) throws XMLException{
-		unselect();
-		FormulaStorage fs = new FormulaStorage();
-		fs.storeFormula(os, model);
-	}
-
-	/**
-	 * Loads model from an XML structure in an input stream (e.g. a file).  
-	 */
-	public void loadModel(InputStream is) throws XMLException{
-		unselect();
-		FormulaStorage fs = new FormulaStorage();
-		Model output = new Model();
-		fs.loadFormula(is, output);
-		model = output;
-		refresh();
-	}
-	
-	/**
 	 * @return LTL formula specified in this workspace.
 	 */
 	public String getFormula() {
 		unselect();
-		return model.toLTL(new FormulaBuilder());
+		return getModel().toLTL(new FormulaBuilder());
 	}
 	
 	/**
@@ -302,7 +276,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 		if (active == null) {
 			throw new IllegalStateException("Cannot delete selected primitive when none is selected.");
 		}
-		model.applyChange(active.delete());
+		getModel().applyChange(active.delete());
 		active = null;
 		refresh();
 	}
@@ -315,7 +289,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 			if (active.isDragging() || active.isMoving()) {
 				throw new IllegalStateException("Cannot unselected graphical primitive that is being edited.");
 			}
-			model.unselect();
+			getModel().unselect();
 			active = null;
 			getParentForm().setPrimitiveSelected(false);
 			refresh();
@@ -326,7 +300,6 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	 * Deletes all graphical primitives of model.
 	 */
 	public void clearModel() {
-		model.clear();
 		active = null;
 	}
 
@@ -362,6 +335,10 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	
 	private Main getParentForm() {
 		return parent;
+	}
+	
+	private Model getModel() {
+		return getParentForm().getModel();
 	}
 
 	@Override

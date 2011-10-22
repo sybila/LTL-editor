@@ -34,10 +34,14 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import ltl.Model;
+
 import series.CsvTSLoader;
 import series.TSLoaderException;
 import series.TimeSeries;
+import series.TimeSeriesLoader;
 import ui.ActionManager.ActionType;
+import xml.Formula;
 import xml.XMLException;
 
 /**
@@ -63,7 +67,8 @@ public class Main extends JFrame {
 	
 	private File timeSeriesFolder = new File(System.getProperty("user.home"));
 	private File exportFolder = new File(System.getProperty("user.home"));
-	private File formulaFile = null;
+	
+	private Formula formula = new Formula();
 
 	/**
 	 * Launches the application.
@@ -160,8 +165,10 @@ public class Main extends JFrame {
 					}
 					
 					try {
-						series = new TimeSeries(new CsvTSLoader(input));
+						TimeSeriesLoader loader = new CsvTSLoader(input);
+						series = new TimeSeries(loader);
 						workspace.setTimeSeries(series);
+						formula.setTimeSeriesSource(fc.getSelectedFile(), loader);
 						actions.getAction(ActionType.SWITCH_TS_VISIBILITY).setEnabled(true);
 						showTimeSeries.setSelected(true);
 					} catch (TSLoaderException tsle) {
@@ -183,6 +190,7 @@ public class Main extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				workspace.setTimeSeries(null);
+				formula.removeTimeSeriesSource();
 				actions.getAction(ActionType.SWITCH_TS_VISIBILITY).setEnabled(false);
 			}
 		});
@@ -192,8 +200,8 @@ public class Main extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int retVal = formulaeFC.showSaveDialog(Main.this);
 				if (retVal == JFileChooser.APPROVE_OPTION && checkFileWrite(formulaeFC.getSelectedFile())) {
-					formulaFile = formulaeFC.getSelectedFile();
-					setNameTitle(formulaFile.toString());
+					formula.setFormulaFile(formulaeFC.getSelectedFile());
+					setNameTitle(formula.getFormulaFile().toString());
 					saveFormula();
 				}
 			}
@@ -201,7 +209,7 @@ public class Main extends JFrame {
 		actions.setAction(ActionType.FORM_SAVE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (formulaFile == null) {
+				if (formula.getFormulaFile() == null) {
 					actions.getAction(ActionType.FORM_SAVE_AS).actionPerformed(e);
 				} else {
 					saveFormula();
@@ -215,9 +223,11 @@ public class Main extends JFrame {
 					int retVal = formulaeFC.showOpenDialog(Main.this);
 					if (retVal == JFileChooser.APPROVE_OPTION) {
 						try {
-							workspace.loadModel(new FileInputStream(formulaeFC.getSelectedFile()));
-							formulaFile = formulaeFC.getSelectedFile();
-							setNameTitle(formulaFile.toString());
+							workspace.unselect();
+							formula.setFormulaFile(formulaeFC.getSelectedFile());
+							formula.load();
+							workspace.refresh();
+							setNameTitle(formula.getFormulaFile().toString());
 						} catch (FileNotFoundException fnfe) {
 							JOptionPane.showMessageDialog(Main.this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formulaeFC.getSelectedFile().toString()), labelsRB.getString("err_input"), JOptionPane.ERROR_MESSAGE);
 						} catch (XMLException xmle) {
@@ -233,7 +243,8 @@ public class Main extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (checkSaved()) {
 					workspace.clearModel();
-					formulaFile = null;
+					formula.setFormulaFile(null);
+					formula.clearModel();
 					setDefaultTitle();
 					workspace.repaint();
 				}	
@@ -366,18 +377,19 @@ public class Main extends JFrame {
 	 * Saves current formula to file specified by the user interface.
 	 */
 	private void saveFormula() {
-		if (formulaFile == null) {
+		if (formula.getFormulaFile() == null) {
 			throw new NullPointerException("No file to save formula selected.");
 		}
 		try {
-			workspace.writeModel(new FileOutputStream(formulaFile));
+			workspace.unselect();
+			formula.save();
 		} catch (FileNotFoundException fnfe) {
-			JOptionPane.showMessageDialog(this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formulaFile.toString()), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
-			formulaFile = null;
+			JOptionPane.showMessageDialog(this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formula.getFormulaFile().toString()), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
+			formula.setFormulaFile(null);
 			setDefaultTitle();
 		} catch (XMLException xmle) {
 			JOptionPane.showMessageDialog(this, xmle.getLocalizedMessage(), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
-			formulaFile = null;
+			formula.setFormulaFile(null);
 			setDefaultTitle();
 		}
 	}
@@ -427,6 +439,13 @@ public class Main extends JFrame {
 		}
 		int retVal = JOptionPane.showConfirmDialog(Main.this, MessageFormat.format(messagesRB.getString("opt_file_exists"), out), labelsRB.getString("opt_file_exists"), JOptionPane.YES_NO_OPTION);
 		return (retVal == JOptionPane.YES_OPTION);
+	}
+	
+	/**
+	 * @return Model of formula being edited.
+	 */
+	public Model getModel() {
+		return formula.getModel();
 	}
 
 }

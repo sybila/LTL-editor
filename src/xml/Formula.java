@@ -207,6 +207,13 @@ public class Formula {
 	}
 
 	/**
+	 * Removes all graphic primitives from the model.
+	 */
+	public void clearModel() {
+		model.clear();
+	}
+	
+	/**
 	 * @return Source of the time series.
 	 */
 	public TimeSeriesSource getTimeSeriesSource() {
