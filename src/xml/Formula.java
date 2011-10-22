@@ -203,6 +203,13 @@ public class Formula {
 	public Model getModel() {
 		return model;
 	}
+
+	/**
+	 * @return Source of the time series.
+	 */
+	public TimeSeriesSource getTimeSeriesSource() {
+		return tsSource;
+	}
 	
 	/**
 	 * Specifies file containing the formula.

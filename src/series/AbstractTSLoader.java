@@ -22,7 +22,7 @@ public abstract class AbstractTSLoader implements TimeSeriesLoader {
 	 * @param src Set of parameters.
 	 * @return {@link TimeSeriesLoader} implementation corresponding to input parameters.
 	 */
-	public static TimeSeriesLoader getLoader(TimeSeriesSource src) throws TSLoaderException, FileNotFoundException { //TODO has to throw an exception
+	public static TimeSeriesLoader getLoader(TimeSeriesSource src) throws TSLoaderException, FileNotFoundException {
 		FileInputStream in  = new FileInputStream(src.getSourceFile());
 		if (src.getLoaderName().equals(FieldTSLoader.NAME)) {
 			return getFieldLoader(new BufferedReader(new InputStreamReader(in)), src);
@@ -39,11 +39,10 @@ public abstract class AbstractTSLoader implements TimeSeriesLoader {
 			conc = Integer.valueOf(src.getParameter(FieldTSLoader.P_CONC_INDEX));
 			deriv = Integer.valueOf(src.getParameter(FieldTSLoader.P_DERIV_INDEX));
 		} catch (NumberFormatException nfe) {
-			//TODO throw exception
-			nfe.printStackTrace();
+			throw new TSLoaderException("import", "Garbled number in loader description.");
 		}
 		if (time < 0 || conc < 0 || deriv < 0) {
-			//TODO throw exception
+			throw new TSLoaderException("import", "Negative number in field loader column description.");
 		}
 		
 		return new FieldTSLoader(in, src.getParameter(FieldTSLoader.P_SEPARATOR), time, conc, deriv);
