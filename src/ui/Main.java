@@ -230,8 +230,10 @@ public class Main extends JFrame {
 							setNameTitle(formula.getFormulaFile().toString());
 						} catch (FileNotFoundException fnfe) {
 							JOptionPane.showMessageDialog(Main.this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formulaeFC.getSelectedFile().toString()), labelsRB.getString("err_input"), JOptionPane.ERROR_MESSAGE);
+							return;
 						} catch (XMLException xmle) {
 							JOptionPane.showMessageDialog(Main.this, xmle.getLocalizedMessage(), labelsRB.getString("err_input"), JOptionPane.ERROR_MESSAGE);
+							return;
 						}
 						try {
 							TimeSeriesLoader loader = AbstractTSLoader.getLoader(formula.getTimeSeriesSource());

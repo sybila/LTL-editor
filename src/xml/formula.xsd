@@ -58,9 +58,9 @@ elementFormDefault="qualified">
 	<xs:element name="formula">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="series" minOccurs="0" maxOccurs="1" type="series"/>
 				<xs:element name="event" minOccurs="0" maxOccurs="unbounded" type="event"/>
 				<xs:element name="transition" minOccurs="0" maxOccurs="unbounded" type="transition"/>
+				<xs:element name="series" minOccurs="0" maxOccurs="1" type="series"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
