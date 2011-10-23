@@ -92,7 +92,7 @@ public class TimeSeriesSource implements XMLRepresentable {
 		Element out = document.createElement(name);
 		URI outURI = srcFile.toURI();
 		if (formFile != null) {
-			outURI = formFile.toURI().relativize(outURI);
+			outURI = getFormulaTargetURI().relativize(outURI);
 		}
 		
 		//series
@@ -124,7 +124,7 @@ public class TimeSeriesSource implements XMLRepresentable {
 				try {
 					URI inURI = new URI(n.getFirstChild().getNodeValue());
 					if (formFile != null) {
-						inURI = formFile.toURI().resolve(inURI);
+						inURI = getFormulaTargetURI().resolve(inURI);
 					}
 					newSrc = new File(inURI);
 				} catch (DOMException dome) {
@@ -146,6 +146,11 @@ public class TimeSeriesSource implements XMLRepresentable {
 		
 		srcFile = newSrc;
 		params = newParams;
+	}
+	
+	//URI to relativize to
+	private URI getFormulaTargetURI() {
+		return formFile.getParentFile().toURI();
 	}
 
 }
