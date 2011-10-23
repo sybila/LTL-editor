@@ -34,15 +34,16 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import exceptions.TSLoaderException;
+import exceptions.XMLException;
+
 import ltl.Model;
 import series.AbstractTSLoader;
 import series.CsvTSLoader;
-import series.TSLoaderException;
 import series.TimeSeries;
 import series.TimeSeriesLoader;
 import ui.ActionManager.ActionType;
 import xml.Formula;
-import xml.XMLException;
 
 /**
  * Main application window and controls.

@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import exceptions.TSLoaderException;
+import exceptions.TSLoaderFormatException;
+
 /**
  * Reads time series from a CSV-like file which is separated into lines and fields (columns).
  * 

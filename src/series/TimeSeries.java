@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import exceptions.TSLoaderException;
+
 /**
  * A sequence of {@link TimeSeriesPoint} in ascending time order.
  * 

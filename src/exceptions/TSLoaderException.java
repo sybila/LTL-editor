@@ -1,8 +1,8 @@
 //Copyright (C) 2011 Tomáš Vejpustek
 //Full copyright notice found in src/LICENSE.  
-package series;
+package exceptions;
 
-import exceptions.LocalizedException;
+import series.TimeSeriesLoader;
 
 /**
  * 

@@ -25,6 +25,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import exceptions.XMLException;
+
 /**
  * Steps necessary to store formula to XML and retrieve it.
  * @deprecated moved to {@link Formula}

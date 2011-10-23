@@ -1,8 +1,7 @@
 //Copyright (C) 2011 Tomáš Vejpustek
 //Full copyright notice found in src/LICENSE.  
-package xml;
+package exceptions;
 
-import exceptions.LocalizedException;
 
 /**
  * Exception thrown as a result of error during XML parsing. 

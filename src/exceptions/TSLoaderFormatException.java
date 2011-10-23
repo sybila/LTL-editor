@@ -1,8 +1,10 @@
 //Copyright (C) 2011 Tomáš Vejpustek
 //Full copyright notice found in src/LICENSE.  
-package series;
+package exceptions;
 
 import java.text.MessageFormat;
+
+import series.TimeSeriesLoader;
 
 /**
  * Signals wrong format of input when loading time series via an implementation of {@link TimeSeriesLoader}.

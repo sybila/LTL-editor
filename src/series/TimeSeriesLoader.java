@@ -4,6 +4,8 @@ package series;
 
 import java.util.Map;
 
+import exceptions.TSLoaderException;
+
 
 /**
  * Wrapper for time series input (e.g. a StringReader). Expects time series data points to be in ascending time order.

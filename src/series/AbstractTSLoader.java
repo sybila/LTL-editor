@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
+import exceptions.TSLoaderException;
+
 import xml.TimeSeriesSource;
 
 /**

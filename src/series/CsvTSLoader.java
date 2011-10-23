@@ -4,6 +4,8 @@ package series;
 
 import java.io.BufferedReader;
 
+import exceptions.TSLoaderException;
+
 /**
  * Very primitive specialization of {@link FieldTSLoader}, where fields are separated by `,' and time,
  * concentration and its derivative are located in the first, second and third columns, respectively.

@@ -5,6 +5,8 @@ package xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import exceptions.XMLException;
+
 /**
  * Specifies objects representable in XML form for usage with DOM XML parser.
  * 

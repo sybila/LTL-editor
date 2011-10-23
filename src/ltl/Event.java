@@ -15,9 +15,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ui.Canvas;
-import xml.XMLException;
 import xml.XMLRepresentable;
 import coordinates.Transformation;
+import exceptions.XMLException;
 
 /**
  * A graphic primitive signifying a point in the course of time series.

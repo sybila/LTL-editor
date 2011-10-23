@@ -18,9 +18,9 @@ import org.w3c.dom.NodeList;
 import selector.EventSelector;
 import selector.Selector;
 import selector.TransitionSelector;
-import xml.XMLException;
 import xml.XMLRepresentable;
 import coordinates.Transformation;
+import exceptions.XMLException;
 
 /**
  * Model of graphic formula constituting of {@link Event}s and {@link Transition}.

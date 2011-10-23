@@ -10,7 +10,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import xml.XMLException;
+import exceptions.XMLException;
+
 
 /**
  * Property which has no fixed reference point and instead relies on other two other property references,
