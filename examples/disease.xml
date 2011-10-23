@@ -59,7 +59,7 @@
 </event>
 <transition left="1" right="2">
 <concentration>
-<upper>20</upper>
+<upper>20.0</upper>
 </concentration>
 <derivative>
 <upper>0.5</upper>
@@ -68,14 +68,18 @@
 </transition>
 <transition left="3" right="4">
 <concentration>
-<upper>60</upper>
+<upper>60.0</upper>
 </concentration>
 <derivative/>
 </transition>
 <transition left="4">
 <concentration>
-<upper>60</upper>
+<upper>60.0</upper>
 </concentration>
 <derivative/>
 </transition>
+<series>
+<source>disease.csv</source>
+<loader concIndex="1" derivIndex="2" separator="," timeIndex="0">field</loader>
+</series>
 </formula>
