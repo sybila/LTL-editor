@@ -1,0 +1,8 @@
+Copyright (C) 2011 Tomáš Vejpustek
+Full copyright notice found in src/LICENSE.
+
+HOW TO IMPLEMENT A TIME SERIES LOADER
+Not really a nice way to do it -- something might be done with this in the future. 
+1) implement the TimeSeriesLoader interface (constructor ideally from InputStream or similar)
+2) implement private static get[your loader](InputStream is, TimeSeriesSource src) method of AbstractTSLoader
+3) add call of the previous method in AbstractTSLoader#getLoader(TimeSeriesSource src) (in the nested if-else)
