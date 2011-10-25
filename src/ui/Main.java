@@ -7,6 +7,8 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -144,7 +146,9 @@ public class Main extends JFrame {
 		actions.setAction(ActionType.EXIT, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				if (checkSaved()) {
+					System.exit(0);
+				}
 			}
 		});
 		actions.setAction(ActionType.TS_LOAD_CSV, new ActionListener() {
@@ -197,19 +201,14 @@ public class Main extends JFrame {
 		actions.setAction(ActionType.FORM_SAVE_AS, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int retVal = formulaeFC.showSaveDialog(Main.this);
-				if (retVal == JFileChooser.APPROVE_OPTION && checkFileWrite(formulaeFC.getSelectedFile())) {
-					formula.setFormulaFile(formulaeFC.getSelectedFile());
-					setNameTitle(formula.getFormulaFile().toString());
-					saveFormula();
-				}
+				saveFormulaAs();
 			}
 		});
 		actions.setAction(ActionType.FORM_SAVE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (formula.getFormulaFile() == null) {
-					actions.getAction(ActionType.FORM_SAVE_AS).actionPerformed(e);
+					saveFormulaAs();
 				} else {
 					saveFormula();
 				}
@@ -383,27 +382,54 @@ public class Main extends JFrame {
 			}
 		});
 		setPrimitiveSelected(false);
+
+		//listener on window closed
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				if (checkSaved()) {
+					System.exit(0);
+				}
+			}
+		});
 	}
 	
 	/**
 	 * Saves current formula to file specified by the user interface.
+	 * @return <code>true</code> when it was saved successfully, <code>false</code> when error occurred.
 	 */
-	private void saveFormula() {
+	private boolean saveFormula() {
 		if (formula.getFormulaFile() == null) {
 			throw new NullPointerException("No file to save formula selected.");
 		}
 		try {
 			workspace.unselect();
 			formula.save();
+			return true;
 		} catch (FileNotFoundException fnfe) {
 			JOptionPane.showMessageDialog(this, MessageFormat.format(messagesRB.getString("err_fnf_out"), formula.getFormulaFile().toString()), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
 			formula.setFormulaFile(null);
 			setDefaultTitle();
+			return false;
 		} catch (XMLException xmle) {
 			JOptionPane.showMessageDialog(this, xmle.getLocalizedMessage(), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
 			formula.setFormulaFile(null);
 			setDefaultTitle();
+			return false;
 		}
+	}
+	
+	/**
+	 * Chooses name for current formula and saves it.
+	 * @return <code>true</code> when formula was saved, <code>false</code> when no name was chosen.
+	 */
+	private boolean saveFormulaAs() {
+		int retVal = formulaeFC.showSaveDialog(Main.this);
+		if (retVal == JFileChooser.APPROVE_OPTION && checkFileWrite(formulaeFC.getSelectedFile())) {
+			formula.setFormulaFile(formulaeFC.getSelectedFile());
+			setNameTitle(formula.getFormulaFile().toString());
+			return saveFormula();
+		}
+		return false;
 	}
 	
 	/**
@@ -414,7 +440,19 @@ public class Main extends JFrame {
 	 * @return <code>true</code> if formula is saved or the user did not want to save it, <code>false</code> if the user wanted to cancel the operation.
 	 */
 	public boolean checkSaved() {
-		return true;
+		if (formula.isSaved()) {
+			return true;
+		}
+		int retVal = JOptionPane.showConfirmDialog(Main.this, messagesRB.getString("opt_unsaved"), labelsRB.getString("opt_changes_save"),JOptionPane.YES_NO_CANCEL_OPTION);
+		switch (retVal) {
+			case (JOptionPane.YES_OPTION):
+				return saveFormulaAs();
+			case (JOptionPane.NO_OPTION):
+				return true;
+			case (JOptionPane.CANCEL_OPTION):
+				return false;
+		}
+		return false;
 	}
 	
 	/**

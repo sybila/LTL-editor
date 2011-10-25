@@ -125,9 +125,9 @@ public class UndoStack {
 	 */
 	public boolean hasChanged() {
 		if (undoStack.isEmpty()) {
-			return false;
+			return true;
 		}
-		return undoStack.peekFirst().equals(new Mark());
+		return !undoStack.peekFirst().equals(new Mark());
 	}
 
 }
