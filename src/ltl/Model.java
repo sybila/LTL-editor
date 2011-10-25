@@ -236,13 +236,6 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 	}
 	
 	/**
-	 * Applies change to the model. Basis of future undo/redo functionality.
-	 */
-	public void applyChange(ModelChange change) {
-		change.apply(this);
-	}
-	
-	/**
 	 * @return <code>true</code> if a contained event is selected, <code>false</code> otherwise.
 	 */
 	private boolean isEventSelected() {

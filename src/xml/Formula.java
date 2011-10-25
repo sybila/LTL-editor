@@ -26,6 +26,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import ltl.Model;
+import ltl.ModelChange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,6 +57,7 @@ public class Formula {
 	private Model model = new Model();
 	private File formulaFile = null;
 	private TimeSeriesSource tsSource = null;
+	private UndoStack undo = new UndoStack();
 	
 	/**
 	 * Creates a new formula with empty model.
@@ -115,6 +117,7 @@ public class Formula {
 		} catch (IOException ioe) {
 			throw new XMLException("output", "File could not be closed.", ioe);
 		}
+		undo.mark();
 	}
 	
 	/**
@@ -208,6 +211,32 @@ public class Formula {
 		return model;
 	}
 
+	public void applyChange(ModelChange target) {
+		target.apply(model);
+		undo.apply(target);
+	}
+	
+	public void undo() {
+		ModelChange target = undo.undo();
+		if (target != null) {
+			//TODO
+		}
+	}
+	
+	public void redo() {
+		ModelChange target = undo.redo();
+		if (target != null) {
+			//TODO
+		}
+	}
+	
+	/**
+	 * @return <code>false</code> if the formula has changed since the last save, <code>true</code> otherwise.
+	 */
+	public boolean isSaved() {
+		return !undo.hasChanged();
+	}
+	
 	/**
 	 * Removes all graphic primitives from the model.
 	 */

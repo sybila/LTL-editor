@@ -27,6 +27,7 @@ import selector.EventCreator;
 import selector.Selector;
 import series.TimeSeries;
 import ui.MouseActionManager.MouseActionType;
+import xml.Formula;
 import coordinates.Transformation;
 
 /**
@@ -147,7 +148,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 						} else {
 							change = active.endMove(new Point2D.Double(e.getX(), e.getY()));
 						}
-						getModel().applyChange(change);
+						getFormula().applyChange(change);
 						active = change.selector(getModel(), coord);
 						if (active != null) {
 							getParentForm().setPrimitiveSelected(true);
@@ -162,7 +163,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 			public void actionPerformed(MouseEvent e) {
 				Selector selected = getModel().getSelected(new Point2D.Double(e.getX(), e.getY()), coord);
 				if (selected != null) {
-					getModel().applyChange(selected.delete());
+					getFormula().applyChange(selected.delete());
 					refresh();
 				}
 			}
@@ -218,7 +219,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	/**
 	 * @return LTL formula specified in this workspace.
 	 */
-	public String getFormula() {
+	public String translateFormula() {
 		unselect();
 		return getModel().toLTL(new FormulaBuilder());
 	}
@@ -276,7 +277,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 		if (active == null) {
 			throw new IllegalStateException("Cannot delete selected primitive when none is selected.");
 		}
-		getModel().applyChange(active.delete());
+		getFormula().applyChange(active.delete());
 		active = null;
 		refresh();
 	}
@@ -338,7 +339,11 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 	}
 	
 	private Model getModel() {
-		return getParentForm().getModel();
+		return getParentForm().getFormula().getModel();
+	}
+	
+	private Formula getFormula() {
+		return getParentForm().getFormula();
 	}
 
 	@Override

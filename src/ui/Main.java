@@ -34,16 +34,14 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
-import exceptions.TSLoaderException;
-import exceptions.XMLException;
-
-import ltl.Model;
 import series.AbstractTSLoader;
 import series.CsvTSLoader;
 import series.TimeSeries;
 import series.TimeSeriesLoader;
 import ui.ActionManager.ActionType;
 import xml.Formula;
+import exceptions.TSLoaderException;
+import exceptions.XMLException;
 
 /**
  * Main application window and controls.
@@ -318,7 +316,7 @@ public class Main extends JFrame {
 		actions.setAction(ActionType.SHOW_FORMULA, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String formula = workspace.getFormula();
+				String formula = workspace.translateFormula();
 				if (formula.isEmpty()) {
 					JOptionPane.showMessageDialog(Main.this, messagesRB.getString("ltl_formula_empty"), labelsRB.getString("msg_ltl"), JOptionPane.INFORMATION_MESSAGE);
 				} else {
@@ -334,7 +332,7 @@ public class Main extends JFrame {
 		actions.setAction(ActionType.EXPORT_FORMULA, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String formula = workspace.getFormula();
+				String formula = workspace.translateFormula();
 				if (formula.isEmpty()) {
 					JOptionPane.showMessageDialog(Main.this, messagesRB.getString("ltl_formula_empty"), labelsRB.getString("err_output"), JOptionPane.ERROR_MESSAGE);
 				} else {
@@ -456,10 +454,9 @@ public class Main extends JFrame {
 	}
 	
 	/**
-	 * @return Model of formula being edited.
+	 * @return Formula being edited.
 	 */
-	public Model getModel() {
-		return formula.getModel();
+	public Formula getFormula() {
+		return formula;
 	}
-
 }
