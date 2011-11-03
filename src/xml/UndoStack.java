@@ -43,6 +43,16 @@ public class UndoStack {
 		}
 		
 		@Override
+		public void undo(Model target) {
+			throw new UnsupportedOperationException("This ModelChange is only a dummy.");
+		}
+		
+		@Override
+		public void redo(Model target) {
+			throw new UnsupportedOperationException("This ModelChange is only a dummy.");
+		}
+		
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == null) {
 				return false;

@@ -30,14 +30,14 @@ public interface ModelChange {
 	
 	/**
 	 * Revokes the change on <code>target</code>.
-	 * Behavior not specified yet. 
+	 * 
+	 * @throws IllegalStateException when called before {@link #apply(Model)} is called. 
 	 */
-	//How should that work?
-	//public void undo(Model target);
+	public void undo(Model target);
 	
 	/**
 	 * Applies change on <code>target</code> after it has been undone.
 	 * @see {@link #undo(Model target)}.
 	 */
-	//public void redo(Model target);
+	public void redo(Model target);
 }

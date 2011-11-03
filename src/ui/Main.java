@@ -382,6 +382,21 @@ public class Main extends JFrame {
 			}
 		});
 		setPrimitiveSelected(false);
+		
+		actions.setAction(ActionType.UNDO, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				workspace.unselect();
+				formula.undo();
+			}
+		});
+		actions.setAction(ActionType.REDO, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				workspace.unselect();
+				formula.redo();
+			}
+		});
 
 		//listener on window closed
 		addWindowListener(new WindowAdapter() {

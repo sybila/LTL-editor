@@ -137,7 +137,14 @@ public class MenuFactory {
 	public JMenu getEditMenu() {
 		JMenu menu = new JMenu(labels.getString("menu_edit"));
 		menu.setMnemonic(KeyEvent.VK_E);
-		JMenuItem item = new JMenuItem(actions.getAction(ActionType.DELETE_PRIMITIVE));
+		JMenuItem item;
+		item = new JMenuItem(actions.getAction(ActionType.UNDO));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+		menu.add(item);
+		item = new JMenuItem(actions.getAction(ActionType.REDO));
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		menu.add(item);
+		item = new JMenuItem(actions.getAction(ActionType.DELETE_PRIMITIVE));
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
 		menu.add(item);
 		return menu;

@@ -211,22 +211,32 @@ public class Formula {
 		return model;
 	}
 
+	/**
+	 * Apply a change to model and put it to undo stack.
+	 * @param target Change to be made.
+	 */
 	public void applyChange(ModelChange target) {
 		target.apply(model);
 		undo.apply(target);
 	}
 	
+	/**
+	 * Undo the last change made to model and move it in undo stack.
+	 */
 	public void undo() {
 		ModelChange target = undo.undo();
 		if (target != null) {
-			//TODO
+			target.undo(model);
 		}
 	}
 	
+	/**
+	 * Redo the last change undone to model and move it in undo stack.
+	 */
 	public void redo() {
 		ModelChange target = undo.redo();
 		if (target != null) {
-			//TODO
+			target.redo(model);
 		}
 	}
 	

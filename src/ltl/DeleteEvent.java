@@ -36,5 +36,19 @@ public class DeleteEvent implements ModelChange {
 	public Selector selector(Model target, Transformation coord) {
 		return null;
 	}
+	
+
+	@Override
+	public void undo(Model target) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not yet implemented.");
+	}
+
+	@Override
+	public void redo(Model target) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not yet implemnted.");
+	}
+
 
 }

@@ -58,7 +58,11 @@ public class ActionManager {
 		/**	Switches the visibility of time series */
 		SWITCH_TS_VISIBILITY,
 		/** Delete currently selected primitive */
-		DELETE_PRIMITIVE;
+		DELETE_PRIMITIVE,
+		/** Performs undo action */
+		UNDO,
+		/** Performs redo action */
+		REDO;
 	}
 	private Map<ActionType,MutableAction> actions = new HashMap<ActionType, MutableAction>();
 	
