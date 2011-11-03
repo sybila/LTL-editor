@@ -148,7 +148,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 						} else {
 							change = active.endMove(new Point2D.Double(e.getX(), e.getY()));
 						}
-						getFormula().applyChange(change);
+						changeModel(change);
 						active = change.selector(getModel(), coord);
 						if (active != null) {
 							getParentForm().setPrimitiveSelected(true);
@@ -163,7 +163,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 			public void actionPerformed(MouseEvent e) {
 				Selector selected = getModel().getSelected(new Point2D.Double(e.getX(), e.getY()), coord);
 				if (selected != null) {
-					getFormula().applyChange(selected.delete());
+					changeModel(selected.delete());
 					refresh();
 				}
 			}
@@ -277,7 +277,7 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 		if (active == null) {
 			throw new IllegalStateException("Cannot delete selected primitive when none is selected.");
 		}
-		getFormula().applyChange(active.delete());
+		changeModel(active.delete());
 		active = null;
 		refresh();
 	}
@@ -346,6 +346,11 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 		return getParentForm().getFormula();
 	}
 
+	private void changeModel(ModelChange target) {
+		getFormula().applyChange(target);
+		getParentForm().markModelChange();
+	}
+	
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (coord == null) {

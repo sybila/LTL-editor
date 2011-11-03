@@ -110,6 +110,33 @@ public class UndoStack {
 	}
 	
 	/**
+	 * @return <code>true</code> if an undo action is possible, <code>false</code> otherwise.
+	 */
+	public boolean canUndo() {
+		ModelChange head = undoStack.peekFirst();
+		if (head == null) {
+			return false;
+		}
+		if (head.equals(new Mark())) {
+			undoStack.pollFirst();
+			head = undoStack.peekFirst();
+			undoStack.addFirst(new Mark());
+			if (head == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * @return <code>true</code> if a redo action is possible, <code>false</code> otherwise.
+	 */
+	public boolean canRedo() {
+		ModelChange head = redoStack.peekFirst();
+		return (head != null);
+	}
+	
+	/**
 	 * Apply a {@link ModelChange} -- put it to the top of undo stack and clear redo stack.
 	 * @param target change to be applied.
 	 */

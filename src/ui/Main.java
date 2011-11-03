@@ -257,6 +257,7 @@ public class Main extends JFrame {
 					formula.setFormulaFile(null);
 					formula.clearModel();
 					setDefaultTitle();
+					initUndoRedo();
 					workspace.repaint();
 				}	
 			}
@@ -387,7 +388,10 @@ public class Main extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				workspace.unselect();
-				formula.undo();
+				if (!formula.undo()) {
+					actions.getAction(ActionType.UNDO).setEnabled(false);
+				}
+				actions.getAction(ActionType.REDO).setEnabled(true);
 				workspace.repaint();
 			}
 		});
@@ -395,10 +399,14 @@ public class Main extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				workspace.unselect();
-				formula.redo();
+				if (!formula.redo()) {
+					actions.getAction(ActionType.REDO).setEnabled(false);
+				}
+				actions.getAction(ActionType.UNDO).setEnabled(true);
 				workspace.repaint();
 			}
 		});
+		initUndoRedo();
 
 		//listener on window closed
 		addWindowListener(new WindowAdapter() {
@@ -513,5 +521,18 @@ public class Main extends JFrame {
 	 */
 	public Formula getFormula() {
 		return formula;
+	}
+
+	/**
+	 * Marks change of the model on the undo and redo buttons. Called whenever model is changed.
+	 */
+	public void markModelChange() {
+		actions.getAction(ActionType.UNDO).setEnabled(true);
+		actions.getAction(ActionType.REDO).setEnabled(false);
+	}
+	
+	private void initUndoRedo() {
+		actions.getAction(ActionType.UNDO).setEnabled(false);
+		actions.getAction(ActionType.REDO).setEnabled(false);
 	}
 }

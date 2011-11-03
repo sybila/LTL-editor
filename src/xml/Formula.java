@@ -222,22 +222,26 @@ public class Formula {
 	
 	/**
 	 * Undo the last change made to model and move it in undo stack.
+	 * @return <code>true</code> if another undo action can be performed, <code>false</code> otherwise.
 	 */
-	public void undo() {
+	public boolean undo() {
 		ModelChange target = undo.undo();
 		if (target != null) {
 			target.undo(model);
 		}
+		return undo.canUndo();
 	}
 	
 	/**
 	 * Redo the last change undone to model and move it in undo stack.
+	 * @return <code>true</code> if another redo action can be performed, <code>false</code> otherwise.
 	 */
-	public void redo() {
+	public boolean redo() {
 		ModelChange target = undo.redo();
 		if (target != null) {
 			target.redo(model);
 		}
+		return undo.canRedo();
 	}
 	
 	/**
