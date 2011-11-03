@@ -44,13 +44,17 @@ public class ModifyTransition implements ModelChange {
 	
 	@Override
 	public void undo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemented.");
+		if (index < 0) {
+			throw new IllegalStateException("Cannot undo unapplied change.");
+		}
+		target.modifyTransition(original, index);
 	}
 
 	@Override
 	public void redo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemnted.");
+		if (index < 0) {
+			throw new IllegalStateException("Cannot redo unapplied change.");
+		}
+		target.modifyTransition(this.target, index);
 	}
 }

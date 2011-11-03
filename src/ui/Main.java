@@ -388,6 +388,7 @@ public class Main extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				workspace.unselect();
 				formula.undo();
+				workspace.repaint();
 			}
 		});
 		actions.setAction(ActionType.REDO, new ActionListener() {
@@ -395,6 +396,7 @@ public class Main extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				workspace.unselect();
 				formula.redo();
+				workspace.repaint();
 			}
 		});
 

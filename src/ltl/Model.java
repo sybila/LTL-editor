@@ -114,6 +114,23 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		selectedEvent = -1;
 		return index;
 	}
+	
+	/**
+	 * Select event and modify it.
+	 * @param target Event to replace modified event.
+	 * @param index Index of event to be modified.
+	 * @see #modifyEvent(Event)
+	 */
+	void modifyEvent(Event target, int index) {
+		if ((index >= events.size()) || (index < 0)) {
+			throw new IllegalArgumentException("Invalid event index.");
+		}
+		if (isEventSelected()) {
+			throw new IllegalStateException("Event already selected.");
+		}
+		selectedEvent = index;
+		modifyEvent(target);
+	}
 
 	/**
 	 * Inserts <code>transition</code> in the place of selected transition.
@@ -134,6 +151,23 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		transitions.add(index, transition);
 		selectedTransition = -1;
 		return index;
+	}
+	
+	/**
+	 * Select transition and modify it.
+	 * @param target Transition to replace modified transition.
+	 * @param index Index of transition to be modified.
+	 * @see #modifyTransition(Transition)
+	 */
+	void modifyTransition(Transition target, int index) {
+		if ((index < 0) || (index >= transitions.size())) {
+			throw new IllegalArgumentException("Invalid transition index.");
+		}
+		if (isTransitionSelected()) {
+			throw new IllegalStateException("Transition already selected.");
+		}
+		selectedTransition = index;
+		modifyTransition(target);
 	}
 	
 	/**

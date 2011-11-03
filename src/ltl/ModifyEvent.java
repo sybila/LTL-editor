@@ -13,7 +13,7 @@ import selector.Selector;
  */
 public class ModifyEvent implements ModelChange {
 	private Event original, target;
-	private int index;
+	private int index = -1;
 	
 	/**
 	 * Prepares event modification.
@@ -45,14 +45,18 @@ public class ModifyEvent implements ModelChange {
 
 	@Override
 	public void undo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemented.");
+		if (index < 0) {
+			throw new IllegalStateException("Cannot undo unapplied change.");
+		}
+		target.modifyEvent(original, index);
 	}
 
 	@Override
 	public void redo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemnted.");
+		if (index < 0) {
+			throw new IllegalStateException("Cannot redo unapplied change.");
+		}
+		target.modifyEvent(this.target, index);
 	}
 
 }
