@@ -6,5 +6,3 @@ Co to dělá (Transitions):
 	-> špatné transitions vlevo a vpravo
 		vytvořím event, upravím transition vedle, upravím event, dám dvakrát zpět a vyhodí to chybu typu "špatná transtition vlevo nebo vpravo"
 Pravděpodobně bude třeba přepracovat celé zpracování Events a Transitions selectory.
-
-Problém při vypínání oken -- po skončení procedury se to vždy vypne.
