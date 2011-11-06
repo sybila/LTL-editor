@@ -3,6 +3,5 @@ Problémem je, že se to nějak bije s undo/redo -- u Events v pohodě, u Transi
 Co to dělá (Transitions):
 	-> přeskakování změn u jedné Transition
 		roztáhnu nahoru, roztáhnu dolů, dám zpět, zpět (funguje) a vpřed (a skočí to dvakrát)
-	-> špatné transitions vlevo a vpravo
-		vytvořím event, upravím transition vedle, upravím event, dám dvakrát zpět a vyhodí to chybu typu "špatná transtition vlevo nebo vpravo"
 Pravděpodobně bude třeba přepracovat celé zpracování Events a Transitions selectory.
+Mělo by stačit změnit jen selektory (pozor, draw!)

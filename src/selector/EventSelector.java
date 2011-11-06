@@ -27,6 +27,7 @@ public abstract class EventSelector extends AbstractSelector {
 	private Event original = null;
 	private Point2D origin = null;
 	private DerivativeSelector derivative;
+	private boolean dragging = false;
 
 	/**
 	 * @param coord
@@ -75,7 +76,8 @@ public abstract class EventSelector extends AbstractSelector {
 		} else {
 			rightBound = getTransformation().getTimeBound();
 		}
-		this.target = target;
+		this.target = target.clone();
+		original = target;
 		derivative = DerivativeSelector.get(coord, target.getDerivative(), new Point2D.Double(target.getTime().getCenter(), target.getConcentration().getCenter()));
 	}
 
@@ -293,7 +295,6 @@ public abstract class EventSelector extends AbstractSelector {
 					"Cannot start moving when already moving or dragging.");
 		}
 		if (objectContains(p)) {
-			original = getTarget().clone();
 			origin = getModelCoordinates(p);
 			return true;
 		}
@@ -306,12 +307,13 @@ public abstract class EventSelector extends AbstractSelector {
 		getTarget().getConcentration().refreshReference();
 		ModelChange result = new ModifyEvent(original, getTarget());
 		original = null;
+		dragging = false;
 		return result;
 	}
 
 	@Override
 	public boolean isDragging() {
-		return ((original != null) && (origin == null));
+		return dragging;
 	}
 
 	@Override
@@ -321,7 +323,7 @@ public abstract class EventSelector extends AbstractSelector {
 					"Cannot start dragging when already moving or dragging.");
 		}
 		if (contains(getPoint(e))) {
-			original = getTarget().clone();
+			dragging = true;
 			return true;
 		}
 		return false;
