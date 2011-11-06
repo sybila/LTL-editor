@@ -1,7 +1,0 @@
-Selectory typu modify fungují tak, že si zkopíruje original a mění si ho.
-Problémem je, že se to nějak bije s undo/redo -- u Events v pohodě, u Transitions to dělá problém. Proč?
-Co to dělá (Transitions):
-	-> přeskakování změn u jedné Transition
-		roztáhnu nahoru, roztáhnu dolů, dám zpět, zpět (funguje) a vpřed (a skočí to dvakrát)
-Pravděpodobně bude třeba přepracovat celé zpracování Events a Transitions selectory.
-Mělo by stačit změnit jen selektory (pozor, draw!)

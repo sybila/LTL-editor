@@ -24,7 +24,7 @@ import coordinates.Transformation;
 public abstract class EventSelector extends AbstractSelector {
 	private double leftBound, rightBound;
 	private Event target;
-	private Event original = null;
+	private Event original;
 	private Point2D origin = null;
 	private DerivativeSelector derivative;
 	private boolean dragging = false;

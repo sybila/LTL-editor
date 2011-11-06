@@ -19,8 +19,9 @@ import coordinates.Transformation;
  */
 public abstract class TransitionSelector extends AbstractSelector {
 	private Transition target;
-	private Transition original = null;
+	private Transition original;
 	private DerivativeSelector derivative;
+	private boolean dragging = false;
 	
 	/**
 	 * 
@@ -40,7 +41,8 @@ public abstract class TransitionSelector extends AbstractSelector {
 	 */
 	protected TransitionSelector(Transformation coord, Transition target) {
 		super(coord);
-		this.target = target;
+		this.target = target.clone();
+		original = target;
 		derivative = DerivativeSelector.get(coord, target.getDerivative(), new Point2D.Double(getTransformation().getTime(getCenter().getX()), getTransformation().getConcentration(getCenter().getY())));
 	}
 	
@@ -94,6 +96,7 @@ public abstract class TransitionSelector extends AbstractSelector {
 		drag(e);
 		ModelChange result = new ModifyTransition(original, getTarget());
 		original = null;
+		dragging = false;
 		return result;
 	}
 
@@ -104,7 +107,7 @@ public abstract class TransitionSelector extends AbstractSelector {
 
 	@Override
 	public boolean isDragging() {
-		return (original != null);
+		return dragging;
 	}
 	
 	@Override
@@ -128,7 +131,7 @@ public abstract class TransitionSelector extends AbstractSelector {
 			throw new IllegalStateException("Cannot initiate dragging when already dragging.");
 		}
 		if (contains(getPoint(e))) {
-			original = getTarget().clone();
+			dragging = true;
 			return true;
 		}
 		return false;
