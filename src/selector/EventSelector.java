@@ -11,35 +11,30 @@ import ltl.ModelChange;
 import ltl.ModifyEvent;
 import ltl.Property;
 import ltl.Property.Bound;
+import ltl.Transition;
 import ui.Canvas;
 import ui.StatusBar;
 import coordinates.Transformation;
 
 /**
- * Selector of an {@link Event}. Implements its moving. Has natural movement
- * boundaries from left and right.
+ * Selector of an {@link Event}. Implements storing of original event and some basic dragging operations.
  * 
  * @author Tomáš Vejpustek
  */
 public abstract class EventSelector extends AbstractSelector {
-	private double leftBound, rightBound;
 	private Event target;
 	private Event original;
-	private Point2D origin = null;
 	private DerivativeSelector derivative;
 	private boolean dragging = false;
 
 	/**
-	 * @param coord
-	 *            Coordinate transformation.
-	 * @param left
-	 *            Next {@link Event} to the left.
-	 * @param right
-	 *            Next {@link Event} to the right.
+	 * @param coord  Coordinate transformation.
+	 * @param left Adjacent {@link Transition} to the left.
+	 * @param right Adjacent {@link Transition} to the right.
 	 * @return Appropriate selector for <code>target</code>.
 	 */
 	public static EventSelector get(Transformation coord, Event target,
-			Event left, Event right) {
+			Transition left, Transition right) {
 		if (target.getTime().isPoint() || !target.getTime().isSet()) {
 			if (target.getConcentration().isPoint()
 					|| !target.getConcentration().isSet()) {
@@ -62,30 +57,38 @@ public abstract class EventSelector extends AbstractSelector {
 	 * movement boundaries.
 	 * @param left left movement boundary
 	 * @param right right movement boundary
+	 * @deprecated moving functionality moved to {@link EventMover}
 	 */
 	protected EventSelector(Transformation coord, Event target, Event left,
 			Event right) {
 		super(coord);
-		if (left != null) {
-			leftBound = left.getTime().getCenter();
-		} else {
-			leftBound = 0;
-		}
-		if (right != null) {
-			rightBound = right.getTime().getCenter();
-		} else {
-			rightBound = getTransformation().getTimeBound();
-		}
 		this.target = target.clone();
 		original = target;
 		derivative = DerivativeSelector.get(coord, target.getDerivative(), new Point2D.Double(target.getTime().getCenter(), target.getConcentration().getCenter()));
 	}
+	
+	/**
+	 * Initializes contained {@link Event} and {@link Transformation}.
+	 */
+	protected EventSelector(Transformation coord, Event target) {
+		super(coord);
+		this.target = target.clone();
+		original = target;
+		derivative = DerivativeSelector.get(coord, getTarget().getDerivative(), new Point2D.Double(getTarget().getTime().getCenter(), getTarget().getConcentration().getCenter()));
+	}
 
 	/**
-	 * @return Selected {@link Event}.
+	 * @return Selected (edited) {@link Event}.
 	 */
 	protected Event getTarget() {
 		return target;
+	}
+	
+	/**
+	 * @return Original {@link Event} (which is stored).
+	 */
+	protected Event getOriginal() {
+		return original;
 	}
 
 	/**
@@ -255,50 +258,6 @@ public abstract class EventSelector extends AbstractSelector {
 	@Override
 	public boolean objectContains(Point2D p) {
 		return getTarget().contains(p, getTransformation());
-	}
-
-	@Override
-	public ModelChange endMove(Point2D p) {
-		move(p);
-		ModelChange result = new ModifyEvent(original, getTarget());
-		origin = null;
-		original = null;
-		return result;
-	}
-
-	@Override
-	public boolean isMoving() {
-		return (origin != null);
-	}
-
-	@Override
-	public void move(Point2D p) {
-		if (!isMoving()) {
-			throw new IllegalStateException("Cannot continue unstarted moving.");
-		}
-		double time = getModelCoordinates(p).getX() - origin.getX()
-				+ original.getTime().getCenter();
-		double conc = getModelCoordinates(p).getY() - origin.getY()
-				+ original.getConcentration().getCenter();
-		if (time > leftBound && time < rightBound) {
-			getTarget().getTime().move(time);
-		}
-		if (conc > 0 && conc < getTransformation().getConcentrationBound()) {
-			getTarget().getConcentration().move(conc);
-		}
-	}
-
-	@Override
-	public boolean startMove(Point2D p) {
-		if (isMoving() || isDragging()) {
-			throw new IllegalStateException(
-					"Cannot start moving when already moving or dragging.");
-		}
-		if (objectContains(p)) {
-			origin = getModelCoordinates(p);
-			return true;
-		}
-		return false;
 	}
 
 	@Override

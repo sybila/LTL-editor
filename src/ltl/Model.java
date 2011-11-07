@@ -109,8 +109,8 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		int index = selectedEvent;
 		events.remove(index);
 		events.add(index, event);
-		transitions.get(index).setRight(event);
-		transitions.get(index+1).setLeft(event);
+		transitions.get(index).setRight(event); //needed for undo and redo
+		transitions.get(index+1).setLeft(event); //needed for undo and redo
 		selectedEvent = -1;
 		return index;
 	}
@@ -186,10 +186,8 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		if (isEventSelected() || isTransitionSelected()) {
 			throw new IllegalStateException("Event or Transition is already selected.");
 		}
-		Event left = (index > 0) ? events.get(index-1) : null;
-		Event right = (index < events.size() - 1) ? events.get(index+1) : null;
 		selectedEvent = index;
-		return EventSelector.get(coord, events.get(index), left, right);
+		return EventSelector.get(coord, events.get(index), transitions.get(index), transitions.get(index+1));
 	}
 
 	/**
@@ -241,9 +239,7 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 			}
 			selectedEvent = events.indexOf(priorityEvent);
 			if (selectedEvent >= 0) {
-				Event left = (selectedEvent != 0) ? events.get(selectedEvent-1) : null;
-				Event right = (selectedEvent != events.size() - 1) ? events.get(selectedEvent+1) : null;
-				return EventSelector.get(coord, priorityEvent, left, right);
+				return EventSelector.get(coord, priorityEvent, transitions.get(selectedEvent), transitions.get(selectedEvent+1));
 			}
 		}
 		for (int index = 0; index < transitions.size(); index++) {

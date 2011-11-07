@@ -14,6 +14,7 @@ import ltl.ModelChange;
 import ltl.ModifyEvent;
 import ltl.Property;
 import ltl.Property.Bound;
+import ltl.Transition;
 import ui.Canvas;
 import coordinates.Transformation;
 
@@ -23,7 +24,7 @@ import coordinates.Transformation;
  * @author Tomáš Vejpustek
  *
  */
-public class BoxEventSelector extends EventSelector {
+public class BoxEventSelector extends EventMover {
 	/**
 	 * Instance of this class represents one of nine active point, "corners".
 	 * 
@@ -115,10 +116,10 @@ public class BoxEventSelector extends EventSelector {
 	
 	/**
 	 * Initializes included {@link Event}, {@link Transformation} and movement boundaries.
-	 * @param left left movement boundary
-	 * @param right right movement boundary
+	 * @param left {@link Transition} adjacent to the {@link Event} from left.
+	 * @param right {@link Transition} adjacent to the {@link Event} from right.
 	 */
-	public BoxEventSelector(Transformation coord, Event event, Event left, Event right) {
+	public BoxEventSelector(Transformation coord, Event event, Transition left, Transition right) {
 		super(coord, event, left, right);
 	}
 	

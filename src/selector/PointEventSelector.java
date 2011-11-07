@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import ltl.Event;
 import ltl.ModelChange;
 import ltl.ModifyEvent;
+import ltl.Transition;
 import ui.Canvas;
 import coordinates.Transformation;
 
@@ -17,15 +18,15 @@ import coordinates.Transformation;
  * @author Tomáš Vejpustek
  *
  */
-public class PointEventSelector extends EventSelector {
+public class PointEventSelector extends EventMover {
 	
 	/**
 	 * Initializes contained {@link Event} and {@link Transformation}; sets
 	 * movement boundaries.
-	 * @param left left movement boundary
-	 * @param right right movement boundary
+	 * @param left {@link Transition} adjacent to the {@link Event} from left.
+	 * @param right {@link Transition} adjacent to the {@link Event} from right.
 	 */
-	protected PointEventSelector(Transformation coord, Event event, Event left, Event right) {
+	protected PointEventSelector(Transformation coord, Event event, Transition left, Transition right) {
 		super(coord, event, left, right);
 	}
 	

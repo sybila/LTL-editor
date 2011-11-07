@@ -11,6 +11,7 @@ import ltl.ModelChange;
 import ltl.ModifyEvent;
 import ltl.Property;
 import ltl.Property.Bound;
+import ltl.Transition;
 import ui.Canvas;
 import coordinates.Transformation;
 
@@ -20,7 +21,7 @@ import coordinates.Transformation;
  * @author Tomáš Vejpustek
  * 
  */
-public class LineEventSelector extends EventSelector {
+public class LineEventSelector extends EventMover {
 	private static enum SelectorPoint {
 		CENTER, //central selector (point property)
 		UPPER, //upper bound selector (interval property)
@@ -36,7 +37,7 @@ public class LineEventSelector extends EventSelector {
 	 * @param coord Coordinate transformation from on-screen to model coordinates.
 	 * @param isTimeLine <code>true</code> if event is interval in time, <code>false</code> if it is interval in concentration.
 	 */
-	protected LineEventSelector(Transformation coord, Event event, Event left, Event right, boolean isTimeLine) {
+	protected LineEventSelector(Transformation coord, Event event, Transition left, Transition right, boolean isTimeLine) {
 		super(coord, event, left, right);
 		this.isTimeLine = isTimeLine;
 	}

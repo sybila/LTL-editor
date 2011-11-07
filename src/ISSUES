@@ -1,6 +1,0 @@
-Changes made when modifying event or transition are not reflected to neighbouring events and transitions.
-Need to rewrite EventSelector constructors and Model#getSelected (and some other procedures of Selectors)
-
-What happened to derivative?
-
-As a whole, the system seems to require a complete rework. :-/

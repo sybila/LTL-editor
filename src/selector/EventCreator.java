@@ -25,7 +25,7 @@ public class EventCreator extends EventSelector {
 	 * @param origin Coordinates specifying starting point. 
 	 */
 	public EventCreator(Transformation coord, Point2D origin) {
-		super(coord, new Event(coord.getTime(origin.getX()), coord.getConcentration(origin.getY())), null, null);
+		super(coord, new Event(coord.getTime(origin.getX()), coord.getConcentration(origin.getY())));
 		getTarget().getTime().makePoint();
 		getTarget().getConcentration().makePoint();
 	}
@@ -60,5 +60,23 @@ public class EventCreator extends EventSelector {
 	@Override
 	public boolean startDrag(MouseEvent e) {
 		return false;
+	}
+
+	@Override
+	public boolean isMoving() {
+		return false;
+	}
+
+	@Override
+	public boolean startMove(Point2D p) {
+		return false;
+	}
+
+	@Override
+	public void move(Point2D p) {} //does nothing
+
+	@Override
+	public ModelChange endMove(Point2D p) {
+		return null;
 	}
 }

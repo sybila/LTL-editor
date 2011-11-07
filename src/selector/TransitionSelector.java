@@ -43,7 +43,7 @@ public abstract class TransitionSelector extends AbstractSelector {
 		super(coord);
 		this.target = target.clone();
 		original = target;
-		derivative = DerivativeSelector.get(coord, target.getDerivative(), new Point2D.Double(getTransformation().getTime(getCenter().getX()), getTransformation().getConcentration(getCenter().getY())));
+		derivative = DerivativeSelector.get(coord, getTarget().getDerivative(), new Point2D.Double(getTransformation().getTime(getCenter().getX()), getTransformation().getConcentration(getCenter().getY())));
 	}
 	
 	/**
