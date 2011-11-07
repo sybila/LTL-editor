@@ -3,6 +3,4 @@ Need to rewrite EventSelector constructors and Model#getSelected (and some other
 
 What happened to derivative?
 
-Weird behaviour of transitions. Take one transition and drag from other place than selector point; still selected but delete button flashes off.
-
 As a whole, the system seems to require a complete rework. :-/

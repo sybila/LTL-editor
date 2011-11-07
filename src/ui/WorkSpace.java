@@ -80,9 +80,13 @@ public class WorkSpace extends JPanel implements ComponentListener, MouseMotionL
 				if (active != null) {
 					Point2D p = new Point2D.Double(e.getX(), e.getY());
 					if (active.contains(p)) {
-						active.startDrag(e);
+						if (!active.startDrag(e)) {
+							return;
+						}
 					} else if (active.objectContains(p)) {
-						active.startMove(p);
+						if (!active.startMove(p)) {
+							return;
+						}
 					} else {
 						getModel().unselect();
 						active = null;
