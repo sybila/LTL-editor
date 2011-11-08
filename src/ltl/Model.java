@@ -77,10 +77,19 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		transitions.add(index+1, inserted[1]);
 		return new EventLocation(index, inserted[0], inserted[1], removed);
 	}
-		
+	
+	/**
+	 * Insert event to given index and changes its adjacent transitions. Includes no control; used by {@link CreateEvent} and {@link DeleteEvent}.
+	 * @param target Target event.
+	 * @param index Index of target event.
+	 * @param left Transition adjacent to the event from left.
+	 * @param right Transition adjacent to the event from right.
+	 */
 	void insertEvent(Event target, int index, Transition left, Transition right) {
-		//TODO
-		throw new UnsupportedOperationException("Not yet implemented.");
+		events.add(index, target);
+		transitions.remove(index);
+		transitions.add(index, left);
+		transitions.add(index+1, right);
 	}
 	
 	/**
@@ -101,9 +110,16 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 		return result;
 	}
 
+	/**
+	 * Removes event from given index and changes its adjacent trasitions. Includes no control; used by {@link CreateEvent} and {@link DeleteEvent}.
+	 * @param index Index of target event.
+	 * @param joined Transition to replace the place of target event and its adjacent transitions.
+	 */
 	void removeEvent(int index, Transition joined) {
-		//TODO
-		throw new UnsupportedOperationException("Not yet implemented.");
+		events.remove(index);
+		transitions.remove(index);
+		transitions.remove(index);
+		transitions.add(index, joined);
 	}
 	
 	/**
