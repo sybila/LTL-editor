@@ -60,7 +60,7 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 	 * Inserts <code>event</code> into this model.
 	 * @return Index of inserted event.
 	 */
-	public int addEvent(Event event) {
+	public EventLocation addEvent(Event event) {
 		if (isEventSelected() || isTransitionSelected()) {
 			throw new IllegalStateException("Cannot add events when model is being edited.");
 		}
@@ -71,26 +71,41 @@ public class Model implements XMLRepresentable, LTLRepresentable {
 			index++;
 		}
 		events.add(index, event);
-		transitions.add(index+1, transitions.get(index).split(event));
-		return index;
+		Transition removed = transitions.remove(index);
+		Transition [] inserted = removed.split(event);
+		transitions.add(index, inserted[0]);
+		transitions.add(index+1, inserted[1]);
+		return new EventLocation(index, inserted[0], inserted[1], removed);
+	}
+		
+	void insertEvent(Event target, int index, Transition left, Transition right) {
+		//TODO
+		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 	
 	/**
 	 * Deletes selected event
 	 * @return Index of deleted event.
 	 */
-	public int deleteEvent() {
+	public EventLocation deleteEvent() {
 		if (!isEventSelected()) {
 			throw new IllegalStateException("Cannot delete event when there is no selected.");
 		}
-		int selected = selectedEvent;
 		events.remove(selectedEvent);
-		transitions.get(selectedEvent).join(transitions.get(selectedEvent+1));
-		transitions.remove(selectedEvent+1);
+		Transition left = transitions.remove(selectedEvent);
+		Transition right = transitions.remove(selectedEvent);
+		Transition joined = left.righJoin(right);
+		EventLocation result = new EventLocation(selectedEvent, left, right, joined);
+		transitions.add(selectedEvent, joined);
 		selectedEvent = -1;
-		return selected;
+		return result;
 	}
 
+	void removeEvent(int index, Transition joined) {
+		//TODO
+		throw new UnsupportedOperationException("Not yet implemented.");
+	}
+	
 	/**
 	 * Inserts <code>event</code> in the place of selected event. 
 	 * @return Index of modified event.

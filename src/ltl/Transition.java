@@ -93,47 +93,53 @@ public class Transition implements XMLRepresentable, LTLRepresentable {
 	
 	/**
 	 * Splits this <code>Transition</code> into two with <code>middle</code> in the middle.
-	 * 
-	 * This transition becomes the left one (i.e. <code>getRight() == middle</code>). 
-	 * @return Right transition (i.e. the one with <code>getLieft() == middle</code>).
+	 *  
+	 * @return Two new transitions as split by the event. Index of the left one is zero.
 	 */
-	public Transition split(Event middle) {
+	public Transition[] split(Event middle) {
 		if (middle == null) {
 			throw new IllegalArgumentException("Cannot split a transition by a null event.");
 		}
-		Transition right = clone();
-		right.right = getRight();
-		this.right = middle;
-		right.left = middle;
-		return right;
+		Transition[] result = new Transition[2];
+		result[0] = clone();
+		result[1] = clone();
+		
+		result[0].right = middle;
+		result[1].left = middle;
+		return result;
 	}
 	
 	/**
-	 * Joins <code>right</code> to this transition. Note, <code>right</code> must be directly to the right of
-	 * this transition, i.e. <code>this.getRight() == right.getLeft()</code> must be true. 
+	 * Joins <code>right</code> with this transition. Note, <code>right</code> must be directly to the right of
+	 * this transition, i.e. <code>this.getRight() == right.getLeft()</code> must be true.
+	 * @return Joined {@link Transition}. 
 	 */
-	public void join(Transition right) {
-		setRight(right.getRight());
+	public Transition righJoin(Transition right) {
+		Transition result = clone();
+		result.setRight(right.getRight());
+		
 		for (Bound b : Bound.values()) {
 			if (getConcentration().hasBound(b) && right.getConcentration().hasBound(b)) {
 				double thisBound = getConcentration().getBound(b);
 				double rightBound = right.getConcentration().getBound(b);
 				if ((b.equals(Bound.UPPER) && (rightBound > thisBound)) || (b.equals(Bound.LOWER) && (rightBound < thisBound))) {
-					getConcentration().setBound(b, rightBound);
+					result.getConcentration().setBound(b, rightBound);
 				}
 			} else if (right.getConcentration().hasBound(b)) {
-				getConcentration().setBound(b, right.getConcentration().getBound(b));
+				result.getConcentration().setBound(b, right.getConcentration().getBound(b));
 			}
 			if (getDerivative().hasBound(b) && right.getDerivative().hasBound(b)) {
 				double thisBound = getDerivative().getBound(b);
 				double rightBound = right.getDerivative().getBound(b);
 				if ((b.equals(Bound.UPPER) && (rightBound > thisBound)) || (b.equals(Bound.LOWER) && (rightBound < thisBound))) {
-					getDerivative().setBound(b, rightBound);
+					result.getDerivative().setBound(b, rightBound);
 				}
 			} else if (right.getDerivative().hasBound(b)) {
-				getDerivative().setBound(b, right.getDerivative().getBound(b));
+				result.getDerivative().setBound(b, right.getDerivative().getBound(b));
 			}
 		}
+		
+		return result;
 	}
 
 	/**

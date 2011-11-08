@@ -14,8 +14,7 @@ import selector.Selector;
  */
 public class CreateEvent implements ModelChange {
 	private Event target;
-	@SuppressWarnings("unused")
-	private int index;
+	private EventLocation info = null;
 
 	/**
 	 * Prepares <code>target</code> to be added to a model.
@@ -26,7 +25,7 @@ public class CreateEvent implements ModelChange {
 	
 	@Override
 	public void apply(Model target) {
-		index = target.addEvent(this.target);
+		info = target.addEvent(this.target);
 	}
 
 	@Override
@@ -36,14 +35,18 @@ public class CreateEvent implements ModelChange {
 
 	@Override
 	public void undo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemented.");
+		if (info == null) {
+			throw new IllegalStateException("Cannot undo unapplied change.");
+		}
+		target.removeEvent(info.getIndex(), info.getJoined());
 	}
 
 	@Override
 	public void redo(Model target) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not yet implemnted.");
+		if (info == null) {
+			throw new IllegalStateException("Cannot redo unapplied change.");
+		}
+		target.insertEvent(this.target, info.getIndex(), info.getLeft(), info.getRight());
 	}
 
 }
